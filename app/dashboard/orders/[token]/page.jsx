@@ -15,7 +15,7 @@ export default function OrdersPage() {
       console.log('Token stored:', token);
 
       // Redirect to a clean route without token
-      router.replace('/dashboard/orders');
+      //router.replace('/dashboard/orders');
     }
   }, [token]);
 
