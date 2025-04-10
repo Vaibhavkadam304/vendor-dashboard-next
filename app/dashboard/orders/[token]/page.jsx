@@ -23,6 +23,7 @@ export default function OrdersPage() {
     <div>
 
        <p>Loading.....</p>
+       <p>Token stored: <strong>{token}</strong></p>
     </div>
   );
 }
