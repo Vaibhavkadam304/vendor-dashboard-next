@@ -7,12 +7,22 @@ import { useEffect, useState } from 'react';
 import useAuth from '@/hooks/useAuth';
 import { SignJWT } from 'jose';
 import Image from "next/image";
+// import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaflet';
+import dynamic from 'next/dynamic';
 
 import { useParams, useRouter } from 'next/navigation';
 
 const username = 'ck_5a5e3dfae960c8a4951168b46708c37d50bee800';
 const appPassword = 'cs_8d6853d98d8b75ddaae2da242987122f38504e7f';
 const base64Creds = btoa(`${username}:${appPassword}`);
+
+const MapContainer = dynamic(() => import('react-leaflet').then((mod) => mod.MapContainer), { ssr: false });
+const TileLayer = dynamic(() => import('react-leaflet').then((mod) => mod.TileLayer), { ssr: false });
+const Marker = dynamic(() => import('react-leaflet').then((mod) => mod.Marker), { ssr: false });
+const Popup = dynamic(() => import('react-leaflet').then((mod) => mod.Popup), { ssr: false });
+
+
+
 
 
 
@@ -43,65 +53,50 @@ export default function StorePage() {
         phone: vendorInfo.phone || '',
         banner: vendorInfo.banner || '', // ✅ Add this line
         location: {
-          address_1: vendorInfo.location?.address_1 || '',
-          city: vendorInfo.location?.city || '',
-          state: vendorInfo.location?.state || '',
-          zip: vendorInfo.location?.zip || '',
-          country: vendorInfo.location?.country || '',
+          address_1: vendorInfo.locations?.[0]?.address_1 || '',
+          city: vendorInfo.locations?.[0]?.city || '',
+          state: vendorInfo.locations?.[0]?.state || '',
+          zip: vendorInfo.locations?.[0]?.zip || '',
+          country: vendorInfo.locations?.[0]?.country || '',
         },
+        map: {
+          lat: vendorInfo.map?.lat || 47.6061389, // Default lat
+          lng: vendorInfo.map?.lng || -122.3328481, // Default lng
+        },
+
         store_categories: vendorInfo.store_categories || [],
         dietary_options: vendorInfo.dietary_options || [],
+        shipping_options: vendorInfo.shipping_options || [], // ✅ Add this line
+        licensing_certification: vendorInfo.licensing_certification || 'Cottage Food Licensed Business', // ✅ Default here
         cancellation_policy: vendorInfo.cancellation_policy || {},
+        catalog_mode: {
+          hide_add_to_cart_button: vendorInfo.catalog_mode?.hide_add_to_cart_button || 'off',
+          hide_product_price: vendorInfo.catalog_mode?.hide_product_price || 'off',
+        },
+        show_support_btn: vendorInfo.show_support_btn || 'no', // ✅ Added this
+        show_support_btn_product: vendorInfo.show_support_btn_product || 'no', // ✅ And this
       });
     }
   }, [vendorInfo]);
  
-  
-
-
-  const handleChange = async (e) => {
-    const { name, value, type, files } = e.target;
-  
-    if (type === 'file') {
-      // Handle file input (banner image)
-      const formDataObj = new FormData();
-      formDataObj.append('file', files[0]);
-      const res = await fetch('https://woocommerce-1355247-4989037.cloudwaysapps.com/wp-json/wp/v2/media', {
-        method: 'POST',
-        headers: {
-          Authorization: `Basic ${base64Creds}`, // use your WooCommerce creds
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    if (name.includes('location.')) {
+      const key = name.split('.')[1];
+      setFormData((prev) => ({
+        ...prev,
+        location: {
+          ...prev.location,
+          [key]: value,
         },
-        body: formDataObj,
-      });
-      const data = await res.json();
-  
-      // Once the image is uploaded, update the form data with the image URL
-      if (data && data.source_url) {
-        setFormData((prev) => ({
-          ...prev,
-          banner: data.source_url, // The URL of the uploaded banner image
-        }));
-      }
+      }));
     } else {
-      // Handle other regular form fields (like store name, bio, etc.)
-      if (name.includes('location.')) {
-        const key = name.split('.')[1];
-        setFormData((prev) => ({
-          ...prev,
-          location: {
-            ...prev.location,
-            [key]: value,
-          },
-        }));
-      } else {
-        setFormData((prev) => ({
-          ...prev,
-          [name]: value,
-        }));
-      }
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
     }
   };
-  
 
   const handleUpdate = async () => {
     if (!vendorInfo?.id) return;
@@ -168,7 +163,9 @@ export default function StorePage() {
 
   
   return (
+
     <div className="max-w-4xl mx-auto p-6 space-y-8">
+
     {/* Banner Upload */}
     <div className="mt-6">
       <div
@@ -201,7 +198,7 @@ export default function StorePage() {
         id="banner-upload"
         type="file"
         accept="image/*"
-        onChange={handleChange}
+        // onChange={handleChange}
         className="hidden"
       />
     </div>
@@ -288,6 +285,128 @@ export default function StorePage() {
         className="w-full border border-[#B55031] px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#B55031]"
       />
     </div>
+
+    {/* Shipping Options */}
+      <div>
+        <label className="block font-semibold text-gray-700 mb-1">Shipping Options</label>
+        <input
+          name="shipping_options"
+          value={formData.shipping_options?.join(', ') || ''}
+          onChange={(e) =>
+            setFormData((prev) => ({
+              ...prev,
+              shipping_options: e.target.value.split(',').map((d) => d.trim()),
+            }))
+          }
+          className="w-full border border-[#B55031] px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#B55031]"
+        />
+      </div>
+
+
+      {/* Licensing and Certification */}
+      <div>
+        <label className="block font-semibold text-gray-700 mb-1">Licensing and Certification</label>
+        <div className="space-y-2 mt-2">
+          {[
+            'Commercially Licensed Business',
+            'Cottage Food Licensed Business',
+            'Working on obtaining required licenses',
+          ].map((option) => (
+            <label key={option} className="flex items-center space-x-2">
+              <input
+                type="radio"
+                name="licensing_certification"
+                value={option}
+                checked={formData.licensing_certification === option}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    licensing_certification: e.target.value,
+                  }))
+                }
+              />
+              <span>{option}</span>
+            </label>
+          ))}
+        </div>
+      </div>
+
+      {/* Catalog Mode */}
+      <div>
+        <label className="block font-semibold text-gray-700 mb-1">Catalog Mode Settings</label>
+        <div className="space-y-2 mt-2">
+          <label className="flex items-center space-x-2">
+            <input
+              type="checkbox"
+              checked={formData.catalog_mode?.hide_add_to_cart_button === 'on'}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  catalog_mode: {
+                    ...prev.catalog_mode,
+                    hide_add_to_cart_button: e.target.checked ? 'on' : 'off',
+                  },
+                }))
+              }
+            />
+            <span>Hide Add to Cart Button</span>
+          </label>
+
+          <label className="flex items-center space-x-2">
+            <input
+              type="checkbox"
+              checked={formData.catalog_mode?.hide_product_price === 'on'}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  catalog_mode: {
+                    ...prev.catalog_mode,
+                    hide_product_price: e.target.checked ? 'on' : 'off',
+                  },
+                }))
+              }
+            />
+            <span>Hide Product Price</span>
+          </label>
+        </div>
+      </div>
+
+      {/* Support Button Settings */}
+      <div className="mt-6">
+        <label className="block font-semibold text-gray-700 mb-1">Support Button Settings</label>
+        <div className="space-y-2 mt-2">
+          <label className="flex items-center space-x-2">
+            <input
+              type="checkbox"
+              checked={formData.show_support_btn === 'yes'}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  show_support_btn: e.target.checked ? 'yes' : 'no',
+                }))
+              }
+            />
+            <span>Enable Support Button on Store</span>
+          </label>
+
+          <label className="flex items-center space-x-2">
+            <input
+              type="checkbox"
+              checked={formData.show_support_btn_product === 'yes'}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  show_support_btn_product: e.target.checked ? 'yes' : 'no',
+                }))
+              }
+            />
+            <span>Enable Support Button on Product Page</span>
+          </label>
+        </div>
+      </div>
+
+
+
   
     {/* Cancellation Policy */}
     <div>
@@ -327,11 +446,7 @@ export default function StorePage() {
     </div>
   </div>
   
-
   );
-
-
-
 
 }
 
