@@ -11,6 +11,22 @@ import Image from "next/image";
 import dynamic from 'next/dynamic';
 
 import { useParams, useRouter } from 'next/navigation';
+import { Fragment } from "react";
+import { Listbox, Transition } from "@headlessui/react";
+import { XMarkIcon, CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
+
+const categoryOptions = [
+  "Cake Loaf",
+  "Cake Pops",
+  "Cakes",
+  "Chocolate",
+  "Cookies",
+  "Cupcakes",
+  "Pastries",
+  "Pies",
+  "Uncategorized",
+];
+
 
 const username = 'ck_5a5e3dfae960c8a4951168b46708c37d50bee800';
 const appPassword = 'cs_8d6853d98d8b75ddaae2da242987122f38504e7f';
@@ -257,21 +273,81 @@ export default function StorePage() {
     {/* Categories */}
     <div>
       <label className="block font-semibold text-gray-700 mb-1">Categories</label>
-      <input
-        name="store_categories"
-        value={formData.store_categories.join(', ')}
-        onChange={(e) =>
-          setFormData((prev) => ({
-            ...prev,
-            store_categories: e.target.value.split(',').map((cat) => cat.trim()),
-          }))
-        }
-        className="w-full border border-[#B55031] px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#B55031]"
-      />
+      <div className="relative">
+        <Listbox
+          value={formData.store_categories}
+          onChange={(selected) =>
+            setFormData((prev) => ({
+              ...prev,
+              store_categories: selected,
+            }))
+          }
+          multiple
+        >
+          <div className="relative border border-[#B55031] rounded-lg">
+            <Listbox.Button className="w-full px-3 py-2 text-left bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#B55031]">
+              <div className="flex flex-wrap gap-1">
+                {formData.store_categories.map((cat) => (
+                  <span
+                    key={cat}
+                    className="bg-[#B55031] text-white text-sm px-2 py-1 rounded flex items-center gap-1"
+                  >
+                    {cat}
+                    <XMarkIcon
+                      className="w-4 h-4 cursor-pointer"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setFormData((prev) => ({
+                          ...prev,
+                          store_categories: prev.store_categories.filter((c) => c !== cat),
+                        }));
+                      }}
+                    />
+                  </span>
+                ))}
+              </div>
+            </Listbox.Button>
+            <Transition
+              as={Fragment}
+              leave="transition ease-in duration-100"
+              leaveFrom="opacity-100"
+              leaveTo="opacity-0"
+            >
+              <Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-lg bg-white border border-[#B55031] shadow-md focus:outline-none">
+                {categoryOptions.map((option) => (
+                  <Listbox.Option
+                    key={option}
+                    value={option}
+                    className={({ active }) =>
+                      `cursor-pointer select-none relative px-4 py-2 ${
+                        active ? "bg-[#B55031] text-white" : "text-gray-900"
+                      }`
+                    }
+                  >
+                    {({ selected }) => (
+                      <>
+                        <span className={`block truncate ${selected ? "font-medium" : "font-normal"}`}>
+                          {option}
+                        </span>
+                        {selected && (
+                          <span className="absolute inset-y-0 right-4 flex items-center pl-3 text-white">
+                            <CheckIcon className="h-5 w-5" />
+                          </span>
+                        )}
+                      </>
+                    )}
+                  </Listbox.Option>
+                ))}
+              </Listbox.Options>
+            </Transition>
+          </div>
+        </Listbox>
+        
+      </div>
     </div>
   
     {/* Dietary Options */}
-    <div>
+    {/* <div>
       <label className="block font-semibold text-gray-700 mb-1">Dietary Options</label>
       <input
         name="dietary_options"
@@ -284,23 +360,77 @@ export default function StorePage() {
         }
         className="w-full border border-[#B55031] px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#B55031]"
       />
+    </div> */}
+    <div>
+      <label className="block font-semibold text-gray-700 mb-1">Dietary Options</label>
+      <div className="space-y-2 mt-2">
+        {[
+          { label: "Gluten Free", value: "gluten_free" },
+          { label: "Sugar Free", value: "sugar_free" },
+          { label: "Eggless", value: "eggless" },
+          { label: "Nut Free", value: "nut_free" },
+          { label: "Vegan", value: "vegan" },
+        ].map((option) => (
+          <label key={option.value} className="flex items-center space-x-2">
+            <input
+              type="checkbox"
+              checked={formData.dietary_options.includes(option.value)}
+              onChange={(e) => {
+                setFormData((prev) => {
+                  const updated = new Set(prev.dietary_options);
+                  if (e.target.checked) {
+                    updated.add(option.value);
+                  } else {
+                    updated.delete(option.value);
+                  }
+                  return {
+                    ...prev,
+                    dietary_options: Array.from(updated),
+                  };
+                });
+              }}
+            />
+            <span>{option.label}</span>
+          </label>
+        ))}
+      </div>
     </div>
 
+
+
     {/* Shipping Options */}
-      <div>
-        <label className="block font-semibold text-gray-700 mb-1">Shipping Options</label>
-        <input
-          name="shipping_options"
-          value={formData.shipping_options?.join(', ') || ''}
-          onChange={(e) =>
-            setFormData((prev) => ({
-              ...prev,
-              shipping_options: e.target.value.split(',').map((d) => d.trim()),
-            }))
-          }
-          className="w-full border border-[#B55031] px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#B55031]"
-        />
+    <div>
+      <label className="block font-semibold text-gray-700 mb-1">Shipping Options Supported</label>
+      <div className="space-y-2 mt-2">
+        {[
+          { label: "Local Pickup", value: "local_pickup" },
+          { label: "Shipping Offered", value: "shipping_offered" },
+        ].map((option) => (
+          <label key={option.value} className="flex items-center space-x-2">
+            <input
+              type="checkbox"
+              checked={formData.shipping_options?.includes(option.value)}
+              onChange={(e) => {
+                setFormData((prev) => {
+                  const updated = new Set(prev.shipping_options || []);
+                  if (e.target.checked) {
+                    updated.add(option.value);
+                  } else {
+                    updated.delete(option.value);
+                  }
+                  return {
+                    ...prev,
+                    shipping_options: Array.from(updated),
+                  };
+                });
+              }}
+            />
+            <span>{option.label}</span>
+          </label>
+        ))}
       </div>
+    </div>
+
 
 
       {/* Licensing and Certification */}
@@ -409,7 +539,7 @@ export default function StorePage() {
 
   
     {/* Cancellation Policy */}
-    <div>
+    {/* <div>
       <label className="block font-semibold text-gray-700 text-lg mb-2">Cancellation Policy</label>
       {Object.entries(formData.cancellation_policy).map(([key, value]) => (
         <div key={key} className="mb-3">
@@ -431,8 +561,38 @@ export default function StorePage() {
           />
         </div>
       ))}
+    </div> */}
+    <div>
+      <label className="block font-semibold text-gray-700 text-lg mb-2">Cancellation Policy</label>
+      {Object.entries(formData.cancellation_policy).map(([key, value]) => (
+        <div key={key} className="mb-3">
+          <label className="block text-sm font-medium text-gray-600 mb-1">
+            {key.replace(/_/g, ' ')}
+          </label>
+          <select
+            value={value}
+            onChange={(e) =>
+              setFormData((prev) => ({
+                ...prev,
+                cancellation_policy: {
+                  ...prev.cancellation_policy,
+                  [key]: e.target.value,
+                },
+              }))
+            }
+            className="w-full border border-[#B55031] px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#B55031]"
+          >
+            <option value="100% Refund">100% Refund</option>
+            <option value="75% Refund">75% Refund</option>
+            <option value="50% Refund">50% Refund</option>
+            <option value="25% Refund">25% Refund</option>
+            <option value="No Refund">No Refund</option>
+          </select>
+        </div>
+      ))}
     </div>
-  
+
+
     {/* Submit Button */}
     <div>
       <button
