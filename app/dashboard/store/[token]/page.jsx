@@ -7,13 +7,18 @@ import { useEffect, useState } from 'react';
 import useAuth from '@/hooks/useAuth';
 import { SignJWT } from 'jose';
 import Image from "next/image";
-// import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaflet';
-import dynamic from 'next/dynamic';
-
 import { useParams, useRouter } from 'next/navigation';
 import { Fragment } from "react";
 import { Listbox, Transition } from "@headlessui/react";
 import { XMarkIcon, CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
+// In your main entry or _app.js
+import 'leaflet/dist/leaflet.css';
+// import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import dynamic from 'next/dynamic';
+
+const VendorMap = dynamic(() => import('@/components/VendorMap'), {
+  ssr: false,
+});
 
 const categoryOptions = [
   "Cake Loaf",
@@ -32,15 +37,40 @@ const username = 'ck_5a5e3dfae960c8a4951168b46708c37d50bee800';
 const appPassword = 'cs_8d6853d98d8b75ddaae2da242987122f38504e7f';
 const base64Creds = btoa(`${username}:${appPassword}`);
 
-const MapContainer = dynamic(() => import('react-leaflet').then((mod) => mod.MapContainer), { ssr: false });
-const TileLayer = dynamic(() => import('react-leaflet').then((mod) => mod.TileLayer), { ssr: false });
-const Marker = dynamic(() => import('react-leaflet').then((mod) => mod.Marker), { ssr: false });
-const Popup = dynamic(() => import('react-leaflet').then((mod) => mod.Popup), { ssr: false });
 
 
+const handleBannerUpload = async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
 
+  try {
+    const formDataUpload = new FormData();
+    formDataUpload.append("file", file);
 
+    const res = await fetch("https://woocommerce-1355247-4989037.cloudwaysapps.com/wp-json/wp/v2/media", {
+      method: "POST",
+      headers: {
+         Authorization: `Basic ${base64Creds}`,
+        // Don't set Content-Type manually! Let browser handle it for multipart
+      },
+      body: formDataUpload,
+    });
 
+    if (!res.ok) throw new Error("Upload failed");
+
+    const data = await res.json();
+    const imageUrl = data.source_url;
+    console.log("Uploaded banner URL:", imageUrl); // ✅ See what WordPress returns
+    // Update your formData with the banner image URL
+    setFormData((prev) => ({
+      ...prev,
+      banner: imageUrl,
+    }));
+  } catch (err) {
+    console.error("Error uploading banner:", err);
+    alert("Banner upload failed.");
+  }
+};
 
 // Helper function to create JWT
 async function createJWT(payload, secret) {
@@ -68,6 +98,7 @@ export default function StorePage() {
         store_bio: vendorInfo.store_bio || '',
         phone: vendorInfo.phone || '',
         banner: vendorInfo.banner || '', // ✅ Add this line
+        profile_picture: vendorInfo.profile_picture || '', // ✅ Add this line
         location: {
           address_1: vendorInfo.locations?.[0]?.address_1 || '',
           city: vendorInfo.locations?.[0]?.city || '',
@@ -214,9 +245,46 @@ export default function StorePage() {
         id="banner-upload"
         type="file"
         accept="image/*"
-        // onChange={handleChange}
+        onChange={handleBannerUpload}
         className="hidden"
       />
+    </div>
+
+    {/* Profile Picture Upload */}
+    <div className="mt-6 flex justify-start">
+      <div className="relative w-32 h-32 rounded-full overflow-hidden bg-gray-200 shadow-md cursor-pointer group">
+        <div
+          onClick={() => document.getElementById("profile-upload").click()}
+          className="relative w-full h-full"
+        >
+          {formData?.profile_picture ? (
+            <Image
+              src={formData.profile_picture}
+              alt="Profile"
+              fill
+              style={{ objectFit: "cover" }}
+              className="rounded-full"
+              onError={() => console.log("Profile image load error")}
+            />
+          ) : (
+            <div className="flex items-center justify-center w-full h-full text-gray-600 text-sm">
+              Upload Profile
+            </div>
+          )}
+
+          <div className="absolute inset-0 bg-black/30 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
+            <p className="text-white text-sm font-medium">Click to change</p>
+          </div>
+        </div>
+
+        <input
+          id="profile-upload"
+          type="file"
+          accept="image/*"
+          onChange={handleBannerUpload}
+          className="hidden"
+        />
+      </div>
     </div>
   
     {/* Store Name */}
@@ -252,7 +320,6 @@ export default function StorePage() {
         className="w-full border border-[#B55031] px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#B55031]"
       />
     </div>
-  
     {/* Location */}
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
       {['address_1', 'city', 'state', 'zip', 'country'].map((field) => (
@@ -269,6 +336,22 @@ export default function StorePage() {
         </div>
       ))}
     </div>
+
+    {/* Map Location Display */}
+    <p className="text-2g  text-gray-800 mb-2">
+      {[
+        formData.location.address_1,
+        formData.location.city,
+        formData.location.state,
+        formData.location.zip,
+        formData.location.country,
+      ]
+        .filter(Boolean)
+        .join(', ')}
+    </p>
+
+   {/* map location */}
+   <VendorMap lat={formData.map.lat} lng={formData.map.lng} />
   
     {/* Categories */}
     <div>
