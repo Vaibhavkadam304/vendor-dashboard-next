@@ -258,10 +258,9 @@ export default function StorePage() {
   
   return (
 
-    <div className="max-w-4xl mx-auto p-6 space-y-8">
-
+    <div className="max-w-4xl mx-auto p-6 space-y-8 border border-gray-300 shadow-sm">
     {/* Banner Upload */}
-    <div className="mt-6">
+    <div className="mt-6 ml-8">
       <div
         onClick={() => document.getElementById("banner-upload").click()}
         className="relative bg-[#F8E1D3] h-64 rounded-2xl overflow-hidden cursor-pointer transition-shadow hover:shadow-xl"
@@ -297,178 +296,73 @@ export default function StorePage() {
       />
     </div>
 
-    {/* Profile Picture Upload */}
-    <div className="mt-6 flex justify-start">
-      <div className="relative w-32 h-32 rounded-full overflow-hidden bg-gray-200 shadow-md cursor-pointer group">
-        <div
-          onClick={() => document.getElementById("profile-upload").click()}
-          className="relative w-full h-full"
-        >
-          {formData?.profile_picture ? (
-            <Image
-              src={formData.profile_picture}
-              alt="Profile"
-              fill
-              style={{ objectFit: "cover" }}
-              className="rounded-full"
-              onError={() => console.log("Profile image load error")}
-            />
-          ) : (
-            <div className="flex items-center justify-center w-full h-full text-gray-600 text-sm">
-              Upload Profile
-            </div>
-          )}
+    <div className='mt-6 flex items-start justify-between px-8'>
 
-          <div className="absolute inset-0 bg-black/30 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
-            <p className="text-white text-sm font-medium">Click to change</p>
-          </div>
-        </div>
-
-        <input
-          id="profile-upload"
-          type="file"
-          accept="image/*"
-          onChange={handleBannerUpload}
-          className="hidden"
-        />
-      </div>
-    </div>
-  
-    {/* Store Name */}
-    <div>
-      <label className="block font-semibold text-gray-700 mb-1">Store Name</label>
-      <input
-        name="store_name"
-        value={formData.store_name}
-        onChange={handleChange}
-        className="w-full border border-[#B55031] px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#B55031]"
-      />
-    </div>
-  
-    {/* Bio */}
-    <div>
-      <label className="block font-semibold text-gray-700 mb-1">Bio</label>
-      <textarea
-        name="store_bio"
-        value={formData.store_bio}
-        onChange={handleChange}
-        className="w-full border border-[#B55031] px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#B55031]"
-        rows={4}
-      />
-    </div>
-  
-    {/* Phone */}
-    <div>
-      <label className="block font-semibold text-gray-700 mb-1">Phone</label>
-      <input
-        name="phone"
-        value={formData.phone}
-        onChange={handleChange}
-        className="w-full border border-[#B55031] px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#B55031]"
-      />
-    </div>
-    {/* Location */}
-
-
-    {/* <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {['address_1', 'city', 'state', 'zip', 'country'].map((field) => (
-        <div key={field}>
-          <label className="block font-semibold text-gray-700 mb-1 capitalize">
-            {field.replace('_', ' ')}
-          </label>
+     {/* Store Name  and phone no*/}
+      <div className="max-w-xs w-full ">
+        <div>
+          <label className="block font-semibold text-gray-700 mb-1">Store Name</label>
           <input
-            name={`locations.${field}`} // 👈 Change here
-            value={formData.locations?.[0]?.[field] || ''}
+            name="store_name"
+            value={formData.store_name}
             onChange={handleChange}
-            className="w-full border border-[#B55031] px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#B55031]"
+            className="w-full border-b border-[#B55031] px-1 py-1 focus:outline-none focus:ring-0 focus:border-b-2 focus:border-[#B55031] bg-transparent"
+            placeholder="Enter store name"
           />
         </div>
-         ))}
-    </div> */}
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-      {['address_1', 'city', 'state', 'zip', 'country'].map((field) => (
-        <div key={field}>
-          <label className="block font-semibold text-gray-700 mb-1 capitalize">
-            {field.replace('_', ' ')}
-          </label>
-
-          {field === 'state' ? (
-            <select
-              name={`locations.${field}`}
-              value={formData.locations?.[0]?.[field] || ''}
-              onChange={handleChange}
-              className="w-full border border-[#B55031] px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#B55031]"
-            >
-              <option value="">Select a State</option>
-              {[
-                ['AL', 'Alabama'], ['AK', 'Alaska'], ['AZ', 'Arizona'], ['AR', 'Arkansas'],
-                ['CA', 'California'], ['CO', 'Colorado'], ['CT', 'Connecticut'],
-                ['DE', 'Delaware'], ['DC', 'District Of Columbia'], ['FL', 'Florida'],
-                ['GA', 'Georgia'], ['HI', 'Hawaii'], ['ID', 'Idaho'], ['IL', 'Illinois'],
-                ['IN', 'Indiana'], ['IA', 'Iowa'], ['KS', 'Kansas'], ['KY', 'Kentucky'],
-                ['LA', 'Louisiana'], ['ME', 'Maine'], ['MD', 'Maryland'],
-                ['MA', 'Massachusetts'], ['MI', 'Michigan'], ['MN', 'Minnesota'],
-                ['MS', 'Mississippi'], ['MO', 'Missouri'], ['MT', 'Montana'],
-                ['NE', 'Nebraska'], ['NV', 'Nevada'], ['NH', 'New Hampshire'],
-                ['NJ', 'New Jersey'], ['NM', 'New Mexico'], ['NY', 'New York'],
-                ['NC', 'North Carolina'], ['ND', 'North Dakota'], ['OH', 'Ohio'],
-                ['OK', 'Oklahoma'], ['OR', 'Oregon'], ['PA', 'Pennsylvania'],
-                ['RI', 'Rhode Island'], ['SC', 'South Carolina'], ['SD', 'South Dakota'],
-                ['TN', 'Tennessee'], ['TX', 'Texas'], ['UT', 'Utah'], ['VT', 'Vermont'],
-                ['VA', 'Virginia'], ['WA', 'Washington'], ['WV', 'West Virginia'],
-                ['WI', 'Wisconsin'], ['WY', 'Wyoming'], ['AA', 'Armed Forces (AA)'],
-                ['AE', 'Armed Forces (AE)'], ['AP', 'Armed Forces (AP)']
-              ].map(([value, label]) => (
-                <option key={value} value={value}>{label}</option>
-              ))}
-            </select>
-          ) : field === 'country' ? (
-            <select
-              name={`locations.${field}`}
-              value={formData.locations?.[0]?.[field] || ''}
-              onChange={handleChange}
-              className="w-full border border-[#B55031] px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#B55031]"
-            >
-              <option value="">Select a Country</option>
-              <option value="US">United States (US)</option>
-            </select>
-          ) : (
-            <input
-              name={`locations.${field}`}
-              value={formData.locations?.[0]?.[field] || ''}
-              onChange={handleChange}
-              className="w-full border border-[#B55031] px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#B55031]"
-            />
-          )}
+        
+        <div className='pt-8'>
+          <label className="block font-semibold text-gray-700 mb-1">Phone</label>
+          <input
+            name="phone"
+            value={formData.phone}
+            onChange={handleChange}
+            className="w-full border-b border-[#B55031] px-1 py-1 bg-transparent focus:outline-none focus:border-b-2 focus:border-[#B55031]"
+          />
         </div>
-      ))}
-    </div>
 
+      </div>
 
+      {/* Profile Picture Upload */}
+      
+        <div className="relative w-32 h-32 rounded-full overflow-hidden bg-gray-200 shadow-md cursor-pointer group">
+          <div
+            onClick={() => document.getElementById("profile-upload").click()}
+            className="relative w-full h-full"
+          >
+            {formData?.profile_picture ? (
+              <Image
+                src={formData.profile_picture}
+                alt="Profile"
+                fill
+                style={{ objectFit: "cover" }}
+                className="rounded-full"
+                onError={() => console.log("Profile image load error")}
+              />
+            ) : (
+              <div className="flex items-center justify-center w-full h-full text-gray-600 text-sm">
+                Upload Profile
+              </div>
+            )}
 
+            <div className="absolute inset-0 bg-black/30 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
+              <p className="text-white text-sm font-medium">Click to change</p>
+            </div>
+          </div>
 
+          <input
+            id="profile-upload"
+            type="file"
+            accept="image/*"
+            onChange={handleBannerUpload}
+            className="hidden"
+          />
+        </div>
 
-
-
-    {/* Map Location Display */}
-    <div>
-      <p className="text-base text-gray-800">
-        {[
-          formData.locations?.[0]?.address_1,
-          formData.locations?.[0]?.city,
-          formData.locations?.[0]?.state,
-          formData.locations?.[0]?.zip,
-          formData.locations?.[0]?.country,
-        ]
-          .filter(Boolean)
-          .join(', ')}
-      </p>
-      {/* map location */}
-      <VendorMap lat={formData.map.lat} lng={formData.map.lng} />
-    </div>
-
+  </div>
+    
     {/* Categories */}
-    <div className="max-w-sm">
+    <div className="max-w-xs pl-8">
       <label className="block font-semibold text-gray-700 mb-1">Categories</label>
       <div className="relative">
         <Listbox
@@ -481,8 +375,8 @@ export default function StorePage() {
           }
           multiple
         >
-          <div className="relative border border-[#B55031] rounded-lg">
-            <Listbox.Button className="w-full px-3 py-2 text-left bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#B55031]">
+          <div className="relative ">
+          <Listbox.Button className="w-full px-1 py-1 text-left bg-transparent border-b border-[#B55031] focus:outline-none focus:border-b-2 focus:border-[#B55031]">
               <div className="flex flex-wrap gap-1">
                 {formData.store_categories.map((cat) => (
                   <span
@@ -543,6 +437,107 @@ export default function StorePage() {
       </div>
     </div>
   
+
+    
+    {/* Location */}
+    {/* <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {['address_1', 'city', 'state', 'zip', 'country'].map((field) => (
+        <div key={field}>
+          <label className="block font-semibold text-gray-700 mb-1 capitalize">
+            {field.replace('_', ' ')}
+          </label>
+          <input
+            name={`locations.${field}`} // 👈 Change here
+            value={formData.locations?.[0]?.[field] || ''}
+            onChange={handleChange}
+            className="w-full border border-[#B55031] px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#B55031]"
+          />
+        </div>
+         ))}
+    </div> */}
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pl-8 pt-8">
+      {['address_1', 'city', 'state', 'zip', 'country'].map((field) => (
+        <div key={field}>
+          <label className="block font-semibold text-gray-700 mb-1 capitalize">
+            {field.replace('_', ' ')}
+          </label>
+
+          {field === 'state' ? (
+            <select
+              name={`locations.${field}`}
+              value={formData.locations?.[0]?.[field] || ''}
+              onChange={handleChange}
+              className="w-full px-1 py-1 text-left bg-transparent border-b border-[#B55031] focus:outline-none focus:border-b-2 focus:border-[#B55031]"
+            >
+              <option value="">Select a State</option>
+              {[
+                ['AL', 'Alabama'], ['AK', 'Alaska'], ['AZ', 'Arizona'], ['AR', 'Arkansas'],
+                ['CA', 'California'], ['CO', 'Colorado'], ['CT', 'Connecticut'],
+                ['DE', 'Delaware'], ['DC', 'District Of Columbia'], ['FL', 'Florida'],
+                ['GA', 'Georgia'], ['HI', 'Hawaii'], ['ID', 'Idaho'], ['IL', 'Illinois'],
+                ['IN', 'Indiana'], ['IA', 'Iowa'], ['KS', 'Kansas'], ['KY', 'Kentucky'],
+                ['LA', 'Louisiana'], ['ME', 'Maine'], ['MD', 'Maryland'],
+                ['MA', 'Massachusetts'], ['MI', 'Michigan'], ['MN', 'Minnesota'],
+                ['MS', 'Mississippi'], ['MO', 'Missouri'], ['MT', 'Montana'],
+                ['NE', 'Nebraska'], ['NV', 'Nevada'], ['NH', 'New Hampshire'],
+                ['NJ', 'New Jersey'], ['NM', 'New Mexico'], ['NY', 'New York'],
+                ['NC', 'North Carolina'], ['ND', 'North Dakota'], ['OH', 'Ohio'],
+                ['OK', 'Oklahoma'], ['OR', 'Oregon'], ['PA', 'Pennsylvania'],
+                ['RI', 'Rhode Island'], ['SC', 'South Carolina'], ['SD', 'South Dakota'],
+                ['TN', 'Tennessee'], ['TX', 'Texas'], ['UT', 'Utah'], ['VT', 'Vermont'],
+                ['VA', 'Virginia'], ['WA', 'Washington'], ['WV', 'West Virginia'],
+                ['WI', 'Wisconsin'], ['WY', 'Wyoming'], ['AA', 'Armed Forces (AA)'],
+                ['AE', 'Armed Forces (AE)'], ['AP', 'Armed Forces (AP)']
+              ].map(([value, label]) => (
+                <option key={value} value={value}>{label}</option>
+              ))}
+            </select>
+          ) : field === 'country' ? (
+            <select
+              name={`locations.${field}`}
+              value={formData.locations?.[0]?.[field] || ''}
+              onChange={handleChange}
+              className="w-full px-1 py-1 text-left bg-transparent border-b border-[#B55031] focus:outline-none focus:border-b-2 focus:border-[#B55031]"
+            >
+              <option value="">Select a Country</option>
+              <option value="US">United States (US)</option>
+            </select>
+          ) : (
+            <input
+              name={`locations.${field}`}
+              value={formData.locations?.[0]?.[field] || ''}
+              onChange={handleChange}
+              className="w-full px-1 py-1 text-left bg-transparent border-b border-[#B55031] focus:outline-none focus:border-b-2 focus:border-[#B55031]"
+            />
+          )}
+        </div>
+      ))}
+    </div>
+
+
+
+
+
+
+
+    {/* Map Location Display */}
+    <div className='pl-8'>
+      <p className="text-base text-gray-800">
+        {[
+          formData.locations?.[0]?.address_1,
+          formData.locations?.[0]?.city,
+          formData.locations?.[0]?.state,
+          formData.locations?.[0]?.zip,
+          formData.locations?.[0]?.country,
+        ]
+          .filter(Boolean)
+          .join(', ')}
+      </p>
+      {/* map location */}
+      <VendorMap lat={formData.map.lat} lng={formData.map.lng} />
+    </div>
+    
+  
     {/* Dietary Options */}
     {/* <div>
       <label className="block font-semibold text-gray-700 mb-1">Dietary Options</label>
@@ -558,7 +553,7 @@ export default function StorePage() {
         className="w-full border border-[#B55031] px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#B55031]"
       />
     </div> */}
-    <div>
+    <div className='pl-8'>
       <label className="block font-semibold text-gray-700 mb-1">Dietary Options</label>
       <div className="space-y-2 mt-2">
         {[
@@ -595,8 +590,10 @@ export default function StorePage() {
 
 
 
+
+
     {/* Shipping Options */}
-    <div>
+    <div className='pl-8'>
       <label className="block font-semibold text-gray-700 mb-1">Shipping Options Supported</label>
       <div className="space-y-2 mt-2">
         {[
@@ -631,7 +628,7 @@ export default function StorePage() {
 
 
       {/* Licensing and Certification */}
-      <div>
+      <div className='pl-8'>
         <label className="block font-semibold text-gray-700 mb-1">Licensing and Certification</label>
         <div className="space-y-2 mt-2">
           {[
@@ -659,7 +656,7 @@ export default function StorePage() {
       </div>
 
       {/* Catalog Mode */}
-      <div>
+      <div className='pl-8'>
         <label className="block font-semibold text-gray-700 mb-1">Catalog Mode Settings</label>
         <div className="space-y-2 mt-2">
           <label className="flex items-center space-x-2">
@@ -699,7 +696,7 @@ export default function StorePage() {
       </div>
 
       {/* Support Button Settings */}
-      <div className="mt-6">
+      <div className="mt-6 pl-8">
         <label className="block font-semibold text-gray-700 mb-1">Support Button Settings</label>
         <div className="space-y-2 mt-2">
           <label className="flex items-center space-x-2">
@@ -731,10 +728,21 @@ export default function StorePage() {
           </label>
         </div>
       </div>
-
-
-
-  
+    
+    
+    
+    
+    {/* Bio */}
+    <div className='pl-8'>
+      <label className="block font-semibold text-gray-700 mb-1">Bio</label>
+      <textarea
+        name="store_bio"
+        value={formData.store_bio}
+        onChange={handleChange}
+        className="w-full border border-[#B55031] px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#B55031]"
+        rows={4}
+      />
+    </div>
     {/* Cancellation Policy */}
     {/* <div>
       <label className="block font-semibold text-gray-700 text-lg mb-2">Cancellation Policy</label>
@@ -759,7 +767,7 @@ export default function StorePage() {
         </div>
       ))}
     </div> */}
-    <div>
+    <div className='pl-8'>
       <label className="block font-semibold text-gray-700 text-lg mb-2">Cancellation Policy</label>
       {Object.entries(formData.cancellation_policy).map(([key, value]) => (
         <div key={key} className="mb-3">
@@ -777,8 +785,8 @@ export default function StorePage() {
                 },
               }))
             }
-            className="w-full border border-[#B55031] px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#B55031]"
-          >
+            className="w-full px-1 py-1 text-left bg-transparent border-b border-[#B55031] focus:outline-none focus:border-b-2 focus:border-[#B55031]"            
+           >
             <option value="100%">100% Refund</option>
             <option value="75%">75% Refund</option>
             <option value="50%">50% Refund</option>
@@ -791,7 +799,7 @@ export default function StorePage() {
 
 
     {/* Submit Button */}
-    <div>
+    <div className='pl-8 pr-8'>
       <button
         onClick={handleUpdate}
         disabled={submitting}

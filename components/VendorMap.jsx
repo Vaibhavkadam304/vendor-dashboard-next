@@ -20,7 +20,7 @@ const customIcon = new L.Icon({
 
 const VendorMap = ({ lat, lng }) => {
   return (
-    <div className="w-80 aspect-square rounded-xl overflow-hidden shadow-md">
+    <div className="w-80 aspect-square  overflow-hidden shadow-md">
       <MapContainer center={[lat, lng]} zoom={13} style={{ height: '100%', width: '100%' }}>
         <TileLayer
           attribution='&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors'
