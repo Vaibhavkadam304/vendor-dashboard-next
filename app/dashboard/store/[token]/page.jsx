@@ -99,13 +99,18 @@ export default function StorePage() {
         phone: vendorInfo.phone || '',
         banner: vendorInfo.banner || '', // ✅ Add this line
         profile_picture: vendorInfo.profile_picture || '', // ✅ Add this line
-        location: {
-          address_1: vendorInfo.locations?.[0]?.address_1 || '',
-          city: vendorInfo.locations?.[0]?.city || '',
-          state: vendorInfo.locations?.[0]?.state || '',
-          zip: vendorInfo.locations?.[0]?.zip || '',
-          country: vendorInfo.locations?.[0]?.country || '',
-        },
+        locations: [
+          {
+            ...vendorInfo.locations?.[0] || {
+              address_1: '',
+              address_2: '',
+              city: '',
+              state: '',
+              zip: '',
+              country: '',
+            },
+          },
+        ],
         map: {
           lat: vendorInfo.map?.lat || 47.6061389, // Default lat
           lng: vendorInfo.map?.lng || -122.3328481, // Default lng
@@ -128,15 +133,31 @@ export default function StorePage() {
  
   const handleChange = (e) => {
     const { name, value } = e.target;
-    if (name.includes('location.')) {
+  
+    if (name.startsWith('locations.')) {
       const key = name.split('.')[1];
-      setFormData((prev) => ({
-        ...prev,
-        location: {
-          ...prev.location,
-          [key]: value,
-        },
-      }));
+  
+      setFormData((prev) => {
+        const currentLocation = prev.locations?.[0] || {
+          address_1: '',
+          address_2: '',
+          city: '',
+          state: '',
+          zip: '',
+          country: '',
+          name: 'Default',
+        };
+  
+        return {
+          ...prev,
+          locations: [
+            {
+              ...currentLocation,
+              [key]: value,
+            },
+          ],
+        };
+      });
     } else {
       setFormData((prev) => ({
         ...prev,
@@ -144,7 +165,10 @@ export default function StorePage() {
       }));
     }
   };
-
+  
+  
+  
+ 
   const handleUpdate = async () => {
     if (!vendorInfo?.id) return;
     setSubmitting(true);
@@ -170,20 +194,43 @@ export default function StorePage() {
       // }
       if (res.ok) {
         setMessage('Store updated successfully!');
-      
+        // const { location, cancellation_policy, ...restFormData } = formData;
         // Merge old and updated values
+        const { cancellation_policy, ...restFormData } = formData;
+
+        // const updatedVendorData = {
+        //   ...vendorInfo,
+        //   ...restFormData,
+        //   locations: formData.locations, // 👈 Keep it clean and simple now
+        //   cancellation_policy: {
+        //     ...vendorInfo.cancellation_policy,
+        //     ...cancellation_policy,
+        //   },
+        // };
         const updatedVendorData = {
           ...vendorInfo,
-          ...formData,
-          location: {
-            ...vendorInfo.location,
-            ...formData.location,
-          },
+          ...restFormData,
           cancellation_policy: {
             ...vendorInfo.cancellation_policy,
             ...formData.cancellation_policy,
           },
         };
+        
+        // Explicitly overwrite locations
+        // updatedVendorData.locations = [...formData.locations];
+        updatedVendorData.locations = [
+          {
+            address_1: '',
+            address_2: '',
+            city: '',
+            state: '',
+            zip: '',
+            country: '',
+            name: 'Default',
+            ...(formData.locations?.[0] || {}),
+          },
+        ];
+        //updatedVendorData.locations[0].country = 'TEST_STATE_124';
       
         // 🔐 Re-encode JWT using jose
         const secret = 'wgziRFG/Mt3wmIv4K+BleKEPZxLXa0C7fc8KOLMnw3Watdi6XwNHojIk8egBnNxUVTZ5aVmTkCYGANtQIqEW9g==';
@@ -192,8 +239,8 @@ export default function StorePage() {
         // ✅ Store updated JWT in cookie
         Cookies.set('jwt_token', newToken, { expires: 7, secure: true });
         Cookies.remove('jwt_token');
-        localStorage.removeItem('jwt_token'); // If used
-        Cookies.set('jwt_token', newToken, { expires: 7, secure: true, sameSite: 'Lax' });
+        // localStorage.removeItem('jwt_token'); // If used
+        // Cookies.set('jwt_token', newToken, { expires: 7, secure: true, sameSite: 'Lax' });
         router.push(`/dashboard/store/${newToken}`);
       } else {
         setMessage(`Error: ${data.message || 'Something went wrong'}`);
@@ -321,40 +368,107 @@ export default function StorePage() {
       />
     </div>
     {/* Location */}
+
+
+    {/* <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {['address_1', 'city', 'state', 'zip', 'country'].map((field) => (
+        <div key={field}>
+          <label className="block font-semibold text-gray-700 mb-1 capitalize">
+            {field.replace('_', ' ')}
+          </label>
+          <input
+            name={`locations.${field}`} // 👈 Change here
+            value={formData.locations?.[0]?.[field] || ''}
+            onChange={handleChange}
+            className="w-full border border-[#B55031] px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#B55031]"
+          />
+        </div>
+         ))}
+    </div> */}
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
       {['address_1', 'city', 'state', 'zip', 'country'].map((field) => (
         <div key={field}>
           <label className="block font-semibold text-gray-700 mb-1 capitalize">
             {field.replace('_', ' ')}
           </label>
-          <input
-            name={`location.${field}`}
-            value={formData.location[field]}
-            onChange={handleChange}
-            className="w-full border border-[#B55031] px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#B55031]"
-          />
+
+          {field === 'state' ? (
+            <select
+              name={`locations.${field}`}
+              value={formData.locations?.[0]?.[field] || ''}
+              onChange={handleChange}
+              className="w-full border border-[#B55031] px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#B55031]"
+            >
+              <option value="">Select a State</option>
+              {[
+                ['AL', 'Alabama'], ['AK', 'Alaska'], ['AZ', 'Arizona'], ['AR', 'Arkansas'],
+                ['CA', 'California'], ['CO', 'Colorado'], ['CT', 'Connecticut'],
+                ['DE', 'Delaware'], ['DC', 'District Of Columbia'], ['FL', 'Florida'],
+                ['GA', 'Georgia'], ['HI', 'Hawaii'], ['ID', 'Idaho'], ['IL', 'Illinois'],
+                ['IN', 'Indiana'], ['IA', 'Iowa'], ['KS', 'Kansas'], ['KY', 'Kentucky'],
+                ['LA', 'Louisiana'], ['ME', 'Maine'], ['MD', 'Maryland'],
+                ['MA', 'Massachusetts'], ['MI', 'Michigan'], ['MN', 'Minnesota'],
+                ['MS', 'Mississippi'], ['MO', 'Missouri'], ['MT', 'Montana'],
+                ['NE', 'Nebraska'], ['NV', 'Nevada'], ['NH', 'New Hampshire'],
+                ['NJ', 'New Jersey'], ['NM', 'New Mexico'], ['NY', 'New York'],
+                ['NC', 'North Carolina'], ['ND', 'North Dakota'], ['OH', 'Ohio'],
+                ['OK', 'Oklahoma'], ['OR', 'Oregon'], ['PA', 'Pennsylvania'],
+                ['RI', 'Rhode Island'], ['SC', 'South Carolina'], ['SD', 'South Dakota'],
+                ['TN', 'Tennessee'], ['TX', 'Texas'], ['UT', 'Utah'], ['VT', 'Vermont'],
+                ['VA', 'Virginia'], ['WA', 'Washington'], ['WV', 'West Virginia'],
+                ['WI', 'Wisconsin'], ['WY', 'Wyoming'], ['AA', 'Armed Forces (AA)'],
+                ['AE', 'Armed Forces (AE)'], ['AP', 'Armed Forces (AP)']
+              ].map(([value, label]) => (
+                <option key={value} value={value}>{label}</option>
+              ))}
+            </select>
+          ) : field === 'country' ? (
+            <select
+              name={`locations.${field}`}
+              value={formData.locations?.[0]?.[field] || ''}
+              onChange={handleChange}
+              className="w-full border border-[#B55031] px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#B55031]"
+            >
+              <option value="">Select a Country</option>
+              <option value="US">United States (US)</option>
+            </select>
+          ) : (
+            <input
+              name={`locations.${field}`}
+              value={formData.locations?.[0]?.[field] || ''}
+              onChange={handleChange}
+              className="w-full border border-[#B55031] px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#B55031]"
+            />
+          )}
         </div>
       ))}
     </div>
 
-    {/* Map Location Display */}
-    <p className="text-2g  text-gray-800 mb-2">
-      {[
-        formData.location.address_1,
-        formData.location.city,
-        formData.location.state,
-        formData.location.zip,
-        formData.location.country,
-      ]
-        .filter(Boolean)
-        .join(', ')}
-    </p>
 
-   {/* map location */}
-   <VendorMap lat={formData.map.lat} lng={formData.map.lng} />
-  
-    {/* Categories */}
+
+
+
+
+
+    {/* Map Location Display */}
     <div>
+      <p className="text-base text-gray-800">
+        {[
+          formData.locations?.[0]?.address_1,
+          formData.locations?.[0]?.city,
+          formData.locations?.[0]?.state,
+          formData.locations?.[0]?.zip,
+          formData.locations?.[0]?.country,
+        ]
+          .filter(Boolean)
+          .join(', ')}
+      </p>
+      {/* map location */}
+      <VendorMap lat={formData.map.lat} lng={formData.map.lng} />
+    </div>
+
+    {/* Categories */}
+    <div className="max-w-sm">
       <label className="block font-semibold text-gray-700 mb-1">Categories</label>
       <div className="relative">
         <Listbox
@@ -665,11 +779,11 @@ export default function StorePage() {
             }
             className="w-full border border-[#B55031] px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#B55031]"
           >
-            <option value="100% Refund">100% Refund</option>
-            <option value="75% Refund">75% Refund</option>
-            <option value="50% Refund">50% Refund</option>
-            <option value="25% Refund">25% Refund</option>
-            <option value="No Refund">No Refund</option>
+            <option value="100%">100% Refund</option>
+            <option value="75%">75% Refund</option>
+            <option value="50%">50% Refund</option>
+            <option value="25%">25% Refund</option>
+            <option value="0%">No Refund</option>
           </select>
         </div>
       ))}
