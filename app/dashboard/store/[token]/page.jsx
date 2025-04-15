@@ -15,11 +15,9 @@ import { XMarkIcon, CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/sol
 import 'leaflet/dist/leaflet.css';
 // import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import dynamic from 'next/dynamic';
-
 const VendorMap = dynamic(() => import('@/components/VendorMap'), {
   ssr: false,
 });
-
 const categoryOptions = [
   "Cake Loaf",
   "Cake Pops",
@@ -32,21 +30,17 @@ const categoryOptions = [
   "Uncategorized",
 ];
 
-
 const username = 'ck_5a5e3dfae960c8a4951168b46708c37d50bee800';
 const appPassword = 'cs_8d6853d98d8b75ddaae2da242987122f38504e7f';
 const base64Creds = btoa(`${username}:${appPassword}`);
 
 
-
 const handleBannerUpload = async (e) => {
   const file = e.target.files[0];
   if (!file) return;
-
   try {
     const formDataUpload = new FormData();
     formDataUpload.append("file", file);
-
     const res = await fetch("https://woocommerce-1355247-4989037.cloudwaysapps.com/wp-json/wp/v2/media", {
       method: "POST",
       headers: {
@@ -55,9 +49,7 @@ const handleBannerUpload = async (e) => {
       },
       body: formDataUpload,
     });
-
     if (!res.ok) throw new Error("Upload failed");
-
     const data = await res.json();
     const imageUrl = data.source_url;
     console.log("Uploaded banner URL:", imageUrl); // ✅ See what WordPress returns
@@ -71,7 +63,6 @@ const handleBannerUpload = async (e) => {
     alert("Banner upload failed.");
   }
 };
-
 // Helper function to create JWT
 async function createJWT(payload, secret) {
   const encoder = new TextEncoder();
@@ -89,7 +80,6 @@ export default function StorePage() {
   const params = useParams(); // token from [token]
   const token = params?.token;
  
-
   useEffect(() => {
     
     if (vendorInfo) {
@@ -115,7 +105,6 @@ export default function StorePage() {
           lat: vendorInfo.map?.lat || 47.6061389, // Default lat
           lng: vendorInfo.map?.lng || -122.3328481, // Default lng
         },
-
         store_categories: vendorInfo.store_categories || [],
         dietary_options: vendorInfo.dietary_options || [],
         shipping_options: vendorInfo.shipping_options || [], // ✅ Add this line
@@ -165,10 +154,7 @@ export default function StorePage() {
       }));
     }
   };
-  
-  
-  
- 
+
   const handleUpdate = async () => {
     if (!vendorInfo?.id) return;
     setSubmitting(true);
@@ -197,7 +183,6 @@ export default function StorePage() {
         // const { location, cancellation_policy, ...restFormData } = formData;
         // Merge old and updated values
         const { cancellation_policy, ...restFormData } = formData;
-
         // const updatedVendorData = {
         //   ...vendorInfo,
         //   ...restFormData,
@@ -254,11 +239,10 @@ export default function StorePage() {
   };
   if (loading || !formData) return <p>Loading...</p>;
   if (!authorized) return <p>Unauthorized</p>;
-
   
   return (
-
-    <div className="max-w-4xl mx-auto p-6 space-y-8 border border-gray-300 shadow-sm">
+    // <div className="max-w-4xl mx-auto p-6 space-y-8 border border-gray-300 shadow-sm">
+    <div className='p-8'>
     {/* Banner Upload */}
     <div className="mt-6 ml-8">
       <div
@@ -295,9 +279,7 @@ export default function StorePage() {
         className="hidden"
       />
     </div>
-
     <div className='mt-6 flex items-start justify-between px-8'>
-
      {/* Store Name  and phone no*/}
       <div className="max-w-xs w-full ">
         <div>
@@ -320,9 +302,7 @@ export default function StorePage() {
             className="w-full border-b border-[#B55031] px-1 py-1 bg-transparent focus:outline-none focus:border-b-2 focus:border-[#B55031]"
           />
         </div>
-
       </div>
-
       {/* Profile Picture Upload */}
       
         <div className="relative w-32 h-32 rounded-full overflow-hidden bg-gray-200 shadow-md cursor-pointer group">
@@ -344,12 +324,10 @@ export default function StorePage() {
                 Upload Profile
               </div>
             )}
-
             <div className="absolute inset-0 bg-black/30 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
               <p className="text-white text-sm font-medium">Click to change</p>
             </div>
           </div>
-
           <input
             id="profile-upload"
             type="file"
@@ -358,7 +336,6 @@ export default function StorePage() {
             className="hidden"
           />
         </div>
-
   </div>
     
     {/* Categories */}
@@ -437,7 +414,6 @@ export default function StorePage() {
       </div>
     </div>
   
-
     
     {/* Location */}
     {/* <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -461,7 +437,6 @@ export default function StorePage() {
           <label className="block font-semibold text-gray-700 mb-1 capitalize">
             {field.replace('_', ' ')}
           </label>
-
           {field === 'state' ? (
             <select
               name={`locations.${field}`}
@@ -513,7 +488,6 @@ export default function StorePage() {
         </div>
       ))}
     </div>
-
 
 
 
@@ -591,7 +565,6 @@ export default function StorePage() {
 
 
 
-
     {/* Shipping Options */}
     <div className='pl-8'>
       <label className="block font-semibold text-gray-700 mb-1">Shipping Options Supported</label>
@@ -626,7 +599,6 @@ export default function StorePage() {
     </div>
 
 
-
       {/* Licensing and Certification */}
       <div className='pl-8'>
         <label className="block font-semibold text-gray-700 mb-1">Licensing and Certification</label>
@@ -654,7 +626,6 @@ export default function StorePage() {
           ))}
         </div>
       </div>
-
       {/* Catalog Mode */}
       <div className='pl-8'>
         <label className="block font-semibold text-gray-700 mb-1">Catalog Mode Settings</label>
@@ -675,7 +646,6 @@ export default function StorePage() {
             />
             <span>Hide Add to Cart Button</span>
           </label>
-
           <label className="flex items-center space-x-2">
             <input
               type="checkbox"
@@ -694,7 +664,6 @@ export default function StorePage() {
           </label>
         </div>
       </div>
-
       {/* Support Button Settings */}
       <div className="mt-6 pl-8">
         <label className="block font-semibold text-gray-700 mb-1">Support Button Settings</label>
@@ -712,7 +681,6 @@ export default function StorePage() {
             />
             <span>Enable Support Button on Store</span>
           </label>
-
           <label className="flex items-center space-x-2">
             <input
               type="checkbox"
@@ -797,7 +765,6 @@ export default function StorePage() {
       ))}
     </div>
 
-
     {/* Submit Button */}
     <div className='pl-8 pr-8'>
       <button
@@ -812,6 +779,4 @@ export default function StorePage() {
   </div>
   
   );
-
 }
-
