@@ -432,7 +432,12 @@ export default function StorePage() {
         </div>
          ))}
     </div> */}
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pl-8 py-8 ">
+
+
+  <div className="flex flex-col lg:flex-row justify-between px-8 py-16 gap-8 pb-8">
+
+    {/* <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pl-8 py-8 "> */}
+    <div className="w-full lg:w-2/3 grid grid-cols-1 sm:grid-cols-2 gap-4">
       {['address_1', 'city', 'state', 'zip', 'country'].map((field) => (
         <div key={field}>
           <label className="block font-semibold text-gray-700 mb-1 capitalize">
@@ -490,14 +495,10 @@ export default function StorePage() {
       ))}
     </div>
 
-
-
-
-
-
     {/* Map Location Display */}
-    <div className='pl-8 pb-4'>
-      <p className="text-base text-gray-800">
+    {/* <div className='pl-8 pb-4 flex justify-end flex-col items-end space-y-2 pr-8'> */}
+    <div className="w-full lg:w-1/3 flex flex-col items-end space-y-2">
+      <p className="text-base text-gray-800 text-right">
         {[
           formData.locations?.[0]?.address_1,
           formData.locations?.[0]?.city,
@@ -512,7 +513,11 @@ export default function StorePage() {
       <VendorMap lat={formData.map.lat} lng={formData.map.lng} />
     </div>
     
-  
+  </div>
+
+
+
+
     {/* Dietary Options */}
     {/* <div>
       <label className="block font-semibold text-gray-700 mb-1">Dietary Options</label>
