@@ -29,6 +29,27 @@ const categoryOptions = [
   "Pies",
   "Uncategorized",
 ];
+const dietaryOptions = [
+  { label: "Gluten Free", value: "gluten_free" },
+  { label: "Sugar Free", value: "sugar_free" },
+  { label: "Eggless", value: "eggless" },
+  { label: "Nut Free", value: "nut_free" },
+  { label: "Vegan", value: "vegan" },
+];
+
+const shippingOptions = [
+  { label: "Local Pickup", value: "local_pickup" },
+  { label: "Shipping Offered", value: "shipping_offered" },
+];
+
+const cancellationOptions = [
+  { label: "100% Refund", value: "100%" },
+  { label: "75% Refund", value: "75%" },
+  { label: "50% Refund", value: "50%" },
+  { label: "25% Refund", value: "25%" },
+  { label: "No Refund", value: "0%" }
+];
+
 
 const username = 'ck_5a5e3dfae960c8a4951168b46708c37d50bee800';
 const appPassword = 'cs_8d6853d98d8b75ddaae2da242987122f38504e7f';
@@ -338,83 +359,7 @@ export default function StorePage() {
           />
         </div>
   </div>
-    
-    {/* Categories */}
-    <div className="max-w-xs pl-8">
-      <label className="block font-semibold text-gray-700 mb-1">Categories</label>
-      <div className="relative">
-        <Listbox
-          value={formData.store_categories}
-          onChange={(selected) =>
-            setFormData((prev) => ({
-              ...prev,
-              store_categories: selected,
-            }))
-          }
-          multiple
-        >
-          <div className="relative ">
-          <Listbox.Button className="w-full px-1 py-1 text-left bg-transparent border-b border-[#B55031] focus:outline-none focus:border-b-2 focus:border-[#B55031]">
-              <div className="flex flex-wrap gap-1">
-                {formData.store_categories.map((cat) => (
-                  <span
-                    key={cat}
-                    className="bg-[#B55031] text-white text-sm px-2 py-1 rounded flex items-center gap-1"
-                  >
-                    {cat}
-                    <XMarkIcon
-                      className="w-4 h-4 cursor-pointer"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setFormData((prev) => ({
-                          ...prev,
-                          store_categories: prev.store_categories.filter((c) => c !== cat),
-                        }));
-                      }}
-                    />
-                  </span>
-                ))}
-              </div>
-            </Listbox.Button>
-            <Transition
-              as={Fragment}
-              leave="transition ease-in duration-100"
-              leaveFrom="opacity-100"
-              leaveTo="opacity-0"
-            >
-              <Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-lg bg-white border border-[#B55031] shadow-md focus:outline-none">
-                {categoryOptions.map((option) => (
-                  <Listbox.Option
-                    key={option}
-                    value={option}
-                    className={({ active }) =>
-                      `cursor-pointer select-none relative px-4 py-2 ${
-                        active ? "bg-[#B55031] text-white" : "text-gray-900"
-                      }`
-                    }
-                  >
-                    {({ selected }) => (
-                      <>
-                        <span className={`block truncate ${selected ? "font-medium" : "font-normal"}`}>
-                          {option}
-                        </span>
-                        {selected && (
-                          <span className="absolute inset-y-0 right-4 flex items-center pl-3 text-white">
-                            <CheckIcon className="h-5 w-5" />
-                          </span>
-                        )}
-                      </>
-                    )}
-                  </Listbox.Option>
-                ))}
-              </Listbox.Options>
-            </Transition>
-          </div>
-        </Listbox>
-        
-      </div>
-    </div>
-  
+ 
     
     {/* Location */}
     {/* <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -433,7 +378,7 @@ export default function StorePage() {
          ))}
     </div> */}
 
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pl-8 py-8 ">
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pl-8 py-8 pb-16 ">
       {['address_1', 'city', 'state', 'zip', 'country'].map((field) => (
         <div key={field}>
           <label className="block font-semibold text-gray-700 mb-1 capitalize">
@@ -491,251 +436,407 @@ export default function StorePage() {
       ))}
     </div>
 
-    {/* Map Location Display */}
-    <div className='pl-8 pb-4 flex justify-end flex-col items-end space-y-2 pr-8'>
-      <p className="text-base text-gray-800 text-right">
-        {[
-          formData.locations?.[0]?.address_1,
-          formData.locations?.[0]?.city,
-          formData.locations?.[0]?.state,
-          formData.locations?.[0]?.zip,
-          formData.locations?.[0]?.country,
-        ]
-          .filter(Boolean)
-          .join(', ')}
-      </p>
-      {/* map location */}
-      <VendorMap lat={formData.map.lat} lng={formData.map.lng} />
-    </div>
-    
-  
+
+    <div className="flex flex-row px-8 pb-16 space-x-8">
+      <div className="w-1/2 space-y-6">
+       
+       <div>
+       <div className="pb-4 max-w-md">
+          <label className="block font-semibold text-gray-700 mb-1">Categories</label>
+          <div className="mt-2">
+            <Listbox
+              value={formData.store_categories}
+              onChange={(selected) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  store_categories: selected,
+                }))
+              }
+              multiple
+            >
+              <div className="relative">
+                <Listbox.Button className="w-full px-1 py-1 text-left bg-transparent border-b border-[#B55031] focus:outline-none focus:border-b-2 focus:border-[#B55031]">
+                  <div className="flex flex-wrap gap-2">
+                    {formData.store_categories?.length > 0 ? (
+                      formData.store_categories.map((cat) => (
+                        <span
+                          key={cat}
+                          className="bg-[#B55031] text-white text-sm px-2 py-1 rounded flex items-center gap-1"
+                        >
+                          {cat}
+                          <XMarkIcon
+                            className="w-4 h-4 cursor-pointer"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setFormData((prev) => ({
+                                ...prev,
+                                store_categories: prev.store_categories.filter((c) => c !== cat),
+                              }));
+                            }}
+                          />
+                        </span>
+                      ))
+                    ) : (
+                      <span className="text-gray-400">Select categories</span>
+                    )}
+                  </div>
+                </Listbox.Button>
+                <Transition
+                  as={Fragment}
+                  leave="transition ease-in duration-100"
+                  leaveFrom="opacity-100"
+                  leaveTo="opacity-0"
+                >
+                  <Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-lg bg-white border border-[#B55031] shadow-md focus:outline-none">
+                    {categoryOptions.map((option) => (
+                      <Listbox.Option
+                        key={option}
+                        value={option}
+                        className={({ active }) =>
+                          `cursor-pointer select-none relative px-4 py-2 ${
+                            active ? "bg-[#B55031] text-white" : "text-gray-900"
+                          }`
+                        }
+                      >
+                        {({ selected }) => (
+                          <>
+                            <span className={`block truncate ${selected ? "font-medium" : "font-normal"}`}>
+                              {option}
+                            </span>
+                            {selected && (
+                              <span className="absolute inset-y-0 right-4 flex items-center pl-3 text-white">
+                                <CheckIcon className="h-5 w-5" />
+                              </span>
+                            )}
+                          </>
+                        )}
+                      </Listbox.Option>
+                    ))}
+                  </Listbox.Options>
+                </Transition>
+              </div>
+            </Listbox>
+          </div>
+        </div>
+
+       </div>
 
 
 
-
-    {/* Dietary Options */}
-    {/* <div>
-      <label className="block font-semibold text-gray-700 mb-1">Dietary Options</label>
-      <input
-        name="dietary_options"
-        value={formData.dietary_options.join(', ')}
-        onChange={(e) =>
-          setFormData((prev) => ({
-            ...prev,
-            dietary_options: e.target.value.split(',').map((d) => d.trim()),
-          }))
-        }
-        className="w-full border border-[#B55031] px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#B55031]"
-      />
-    </div> */}
-    <div className='pl-8 pb-4'>
-      <label className="block font-semibold text-gray-700 mb-1">Dietary Options</label>
-      <div className="space-y-2 mt-2">
-        {[
-          { label: "Gluten Free", value: "gluten_free" },
-          { label: "Sugar Free", value: "sugar_free" },
-          { label: "Eggless", value: "eggless" },
-          { label: "Nut Free", value: "nut_free" },
-          { label: "Vegan", value: "vegan" },
-        ].map((option) => (
-          <label key={option.value} className="flex items-center space-x-2">
-            <input
-              type="checkbox"
-              checked={formData.dietary_options.includes(option.value)}
-              onChange={(e) => {
-                setFormData((prev) => {
-                  const updated = new Set(prev.dietary_options);
-                  if (e.target.checked) {
-                    updated.add(option.value);
-                  } else {
-                    updated.delete(option.value);
-                  }
-                  return {
-                    ...prev,
-                    dietary_options: Array.from(updated),
-                  };
-                });
-              }}
-            />
-            <span>{option.label}</span>
-          </label>
-        ))}
-      </div>
-    </div>
-
-
-
-
-    {/* Shipping Options */}
-    <div className='pl-8 pb-4'>
-      <label className="block font-semibold text-gray-700 mb-1">Shipping Options Supported</label>
-      <div className="space-y-2 mt-2">
-        {[
-          { label: "Local Pickup", value: "local_pickup" },
-          { label: "Shipping Offered", value: "shipping_offered" },
-        ].map((option) => (
-          <label key={option.value} className="flex items-center space-x-2">
-            <input
-              type="checkbox"
-              checked={formData.shipping_options?.includes(option.value)}
-              onChange={(e) => {
-                setFormData((prev) => {
-                  const updated = new Set(prev.shipping_options || []);
-                  if (e.target.checked) {
-                    updated.add(option.value);
-                  } else {
-                    updated.delete(option.value);
-                  }
-                  return {
-                    ...prev,
-                    shipping_options: Array.from(updated),
-                  };
-                });
-              }}
-            />
-            <span>{option.label}</span>
-          </label>
-        ))}
-      </div>
-    </div>
-
-
-      {/* Licensing and Certification */}
-      <div className='pl-8 pb-4'>
-        <label className="block font-semibold text-gray-700 mb-1">Licensing and Certification</label>
-        <div className="space-y-2 mt-2">
-          {[
-            'Commercially Licensed Business',
-            'Cottage Food Licensed Business',
-            'Working on obtaining required licenses',
-          ].map((option) => (
-            <label key={option} className="flex items-center space-x-2">
-              <input
-                type="radio"
-                name="licensing_certification"
-                value={option}
-                checked={formData.licensing_certification === option}
-                onChange={(e) =>
+        {/* Dietary Options  */}
+        <div>  
+         <div className="pb-4 max-w-md">
+            <label className="block font-semibold text-gray-700 mb-1">Dietary Options</label>
+            <div className="mt-2">
+              <Listbox
+                value={formData.dietary_options}
+                onChange={(selected) =>
                   setFormData((prev) => ({
                     ...prev,
-                    licensing_certification: e.target.value,
+                    dietary_options: selected,
                   }))
                 }
-              />
-              <span>{option}</span>
-            </label>
-          ))}
+                multiple
+              >
+                <div className="relative">
+                  <Listbox.Button className="w-full px-1 py-1 text-left bg-transparent border-b border-[#B55031] focus:outline-none focus:border-b-2 focus:border-[#B55031]">
+                    <div className="flex flex-wrap gap-2">
+                      {formData.dietary_options.length > 0 ? (
+                        formData.dietary_options.map((item) => (
+                          <span
+                            key={item}
+                            className="bg-[#B55031] text-white text-sm px-2 py-1 rounded flex items-center gap-1"
+                          >
+                            {
+                              dietaryOptions.find((opt) => opt.value === item)?.label || item
+                            }
+                            <XMarkIcon
+                              className="w-4 h-4 cursor-pointer"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setFormData((prev) => ({
+                                  ...prev,
+                                  dietary_options: prev.dietary_options.filter((val) => val !== item),
+                                }));
+                              }}
+                            />
+                          </span>
+                        ))
+                      ) : (
+                        <span className="text-gray-400">Select dietary preferences</span>
+                      )}
+                    </div>
+                  </Listbox.Button>
+                  <Transition
+                    as={Fragment}
+                    leave="transition ease-in duration-100"
+                    leaveFrom="opacity-100"
+                    leaveTo="opacity-0"
+                  >
+                    <Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-lg bg-white border border-[#B55031] shadow-md focus:outline-none">
+                      {dietaryOptions.map((option) => (
+                        <Listbox.Option
+                          key={option.value}
+                          value={option.value}
+                          className={({ active }) =>
+                            `cursor-pointer select-none relative px-4 py-2 ${
+                              active ? "bg-[#B55031] text-white" : "text-gray-900"
+                            }`
+                          }
+                        >
+                          {({ selected }) => (
+                            <>
+                              <span className={`block truncate ${selected ? "font-medium" : "font-normal"}`}>
+                                {option.label}
+                              </span>
+                              {selected && (
+                                <span className="absolute inset-y-0 right-4 flex items-center pl-3 text-white">
+                                  <CheckIcon className="h-5 w-5" />
+                                </span>
+                              )}
+                            </>
+                          )}
+                        </Listbox.Option>
+                      ))}
+                    </Listbox.Options>
+                  </Transition>
+                </div>
+              </Listbox>
+            </div>
+          </div>
+
+        </div>
+         {/* Shipping Options */}
+        <div>
+          <div className="pb-4 max-w-md">
+            <label className="block font-semibold text-gray-700 mb-1">Shipping Options Supported</label>
+            <div className="mt-2">
+              <Listbox
+                value={formData.shipping_options}
+                onChange={(selected) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    shipping_options: selected,
+                  }))
+                }
+                multiple
+              >
+                <div className="relative">
+                  <Listbox.Button className="w-full px-1 py-1 text-left bg-transparent border-b border-[#B55031] focus:outline-none focus:border-b-2 focus:border-[#B55031]">
+                    <div className="flex flex-wrap gap-2">
+                      {formData.shipping_options?.length > 0 ? (
+                        formData.shipping_options.map((item) => (
+                          <span
+                            key={item}
+                            className="bg-[#B55031] text-white text-sm px-2 py-1 rounded flex items-center gap-1"
+                          >
+                            {
+                              shippingOptions.find((opt) => opt.value === item)?.label || item
+                            }
+                            <XMarkIcon
+                              className="w-4 h-4 cursor-pointer"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setFormData((prev) => ({
+                                  ...prev,
+                                  shipping_options: prev.shipping_options.filter((val) => val !== item),
+                                }));
+                              }}
+                            />
+                          </span>
+                        ))
+                      ) : (
+                        <span className="text-gray-400">Select shipping options</span>
+                      )}
+                    </div>
+                  </Listbox.Button>
+                  <Transition
+                    as={Fragment}
+                    leave="transition ease-in duration-100"
+                    leaveFrom="opacity-100"
+                    leaveTo="opacity-0"
+                  >
+                    <Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-lg bg-white border border-[#B55031] shadow-md focus:outline-none">
+                      {shippingOptions.map((option) => (
+                        <Listbox.Option
+                          key={option.value}
+                          value={option.value}
+                          className={({ active }) =>
+                            `cursor-pointer select-none relative px-4 py-2 ${
+                              active ? "bg-[#B55031] text-white" : "text-gray-900"
+                            }`
+                          }
+                        >
+                          {({ selected }) => (
+                            <>
+                              <span className={`block truncate ${selected ? "font-medium" : "font-normal"}`}>
+                                {option.label}
+                              </span>
+                              {selected && (
+                                <span className="absolute inset-y-0 right-4 flex items-center pl-3 text-white">
+                                  <CheckIcon className="h-5 w-5" />
+                                </span>
+                              )}
+                            </>
+                          )}
+                        </Listbox.Option>
+                      ))}
+                    </Listbox.Options>
+                  </Transition>
+                </div>
+              </Listbox>
+            </div>
+          </div>
+
         </div>
       </div>
-      {/* Catalog Mode */}
-      <div className='pl-8'>
-        <label className="block font-semibold text-gray-700 mb-1">Catalog Mode Settings</label>
-        <div className="space-y-2 mt-2">
-          <label className="flex items-center space-x-2">
-            <input
-              type="checkbox"
-              checked={formData.catalog_mode?.hide_add_to_cart_button === 'on'}
-              onChange={(e) =>
-                setFormData((prev) => ({
-                  ...prev,
-                  catalog_mode: {
-                    ...prev.catalog_mode,
-                    hide_add_to_cart_button: e.target.checked ? 'on' : 'off',
-                  },
-                }))
-              }
-            />
-            <span>Hide Add to Cart Button</span>
-          </label>
-          <label className="flex items-center space-x-2">
-            <input
-              type="checkbox"
-              checked={formData.catalog_mode?.hide_product_price === 'on'}
-              onChange={(e) =>
-                setFormData((prev) => ({
-                  ...prev,
-                  catalog_mode: {
-                    ...prev.catalog_mode,
-                    hide_product_price: e.target.checked ? 'on' : 'off',
-                  },
-                }))
-              }
-            />
-            <span>Hide Product Price</span>
-          </label>
-        </div>
+       {/* Map Location Display */}
+      <div className="w-1/2 flex flex-col items-end space-y-2 pr-8">
+          <p className="text-base text-gray-800 text-right">
+          {[
+            formData.locations?.[0]?.address_1,
+            formData.locations?.[0]?.city,
+            formData.locations?.[0]?.state,
+            formData.locations?.[0]?.zip,
+            formData.locations?.[0]?.country,
+          ]
+            .filter(Boolean)
+            .join(', ')}
+        </p>
+        <VendorMap lat={formData.map.lat} lng={formData.map.lng} />
       </div>
-      {/* Support Button Settings */}
-      <div className="mt-6 pl-8 pb-4">
-        <label className="block font-semibold text-gray-700 mb-1">Support Button Settings</label>
-        <div className="space-y-2 mt-2">
-          <label className="flex items-center space-x-2">
-            <input
-              type="checkbox"
-              checked={formData.show_support_btn === 'yes'}
-              onChange={(e) =>
-                setFormData((prev) => ({
-                  ...prev,
-                  show_support_btn: e.target.checked ? 'yes' : 'no',
-                }))
-              }
-            />
-            <span>Enable Support Button on Store</span>
-          </label>
-          <label className="flex items-center space-x-2">
-            <input
-              type="checkbox"
-              checked={formData.show_support_btn_product === 'yes'}
-              onChange={(e) =>
-                setFormData((prev) => ({
-                  ...prev,
-                  show_support_btn_product: e.target.checked ? 'yes' : 'no',
-                }))
-              }
-            />
-            <span>Enable Support Button on Product Page</span>
-          </label>
-        </div>
-      </div>
-    
-    
-    
+    </div>
+
     
     {/* Bio */}
-    <div className='pl-8 pb-4'>
-      <label className="block font-semibold text-gray-700 mb-1">Bio</label>
+<div className="px-8 pb-8 flex justify-center">
+  <div className="w-11/12">
+    <label className="block text-lg font-semibold text-gray-800 mb-2">
+      Bio
+    </label>
+    <div className="bg-white shadow-md rounded-xl border border-[#B55031] p-4">
       <textarea
         name="store_bio"
         value={formData.store_bio}
         onChange={handleChange}
-        className="w-full border border-[#B55031] px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#B55031]"
-        rows={4}
+        placeholder="Write a short description about your store, experience, or products..."
+        className="w-full resize-none text-gray-700 placeholder-gray-400 border-none focus:ring-0 focus:outline-none bg-transparent"
+        rows={5}
       />
     </div>
+  </div>
+</div>
+
+
+
+
+    <div className="flex flex-col md:flex-row gap-8 px-8 pb-8">
+      <div className="flex-1 space-y-6">
+         <div>
+           {/* Catalog Mode */}
+            <label className="block font-semibold text-gray-700 mb-1">Catalog Mode Settings</label>
+            <div className="space-y-2 mt-2">
+              <label className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  checked={formData.catalog_mode?.hide_add_to_cart_button === 'on'}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      catalog_mode: {
+                        ...prev.catalog_mode,
+                        hide_add_to_cart_button: e.target.checked ? 'on' : 'off',
+                      },
+                    }))
+                  }
+                />
+                <span>Hide Add to Cart Button</span>
+              </label>
+              <label className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  checked={formData.catalog_mode?.hide_product_price === 'on'}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      catalog_mode: {
+                        ...prev.catalog_mode,
+                        hide_product_price: e.target.checked ? 'on' : 'off',
+                      },
+                    }))
+                  }
+                />
+                <span>Hide Product Price</span>
+              </label>
+            </div>
+          </div>
+          {/* Support Button Settings */}
+          <div>
+            <label className="block font-semibold text-gray-700 mb-1">Support Button Settings</label>
+            <div className="space-y-2 mt-2">
+              <label className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  checked={formData.show_support_btn === 'yes'}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      show_support_btn: e.target.checked ? 'yes' : 'no',
+                    }))
+                  }
+                />
+                <span>Enable Support Button on Store</span>
+              </label>
+              <label className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  checked={formData.show_support_btn_product === 'yes'}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      show_support_btn_product: e.target.checked ? 'yes' : 'no',
+                    }))
+                  }
+                />
+                <span>Enable Support Button on Product Page</span>
+              </label>
+            </div>
+          </div>
+     
+      </div>
+
+      {/* Licensing and Certification */}
+      <div className="flex-1">
+        <label className="block font-semibold text-gray-700 mb-1">Licensing and Certification</label>
+          <div className="space-y-2 mt-2">
+            {[
+              'Commercially Licensed Business',
+              'Cottage Food Licensed Business',
+              'Working on obtaining required licenses',
+            ].map((option) => (
+              <label key={option} className="flex items-center space-x-2">
+                <input
+                  type="radio"
+                  name="licensing_certification"
+                  value={option}
+                  checked={formData.licensing_certification === option}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      licensing_certification: e.target.value,
+                    }))
+                  }
+                />
+                <span>{option}</span>
+              </label>
+            ))}
+          </div>
+      </div>    
+   
+    </div>
+
+
     {/* Cancellation Policy */}
-    {/* <div>
-      <label className="block font-semibold text-gray-700 text-lg mb-2">Cancellation Policy</label>
-      {Object.entries(formData.cancellation_policy).map(([key, value]) => (
-        <div key={key} className="mb-3">
-          <label className="block text-sm font-medium text-gray-600 mb-1">
-            {key.replace(/_/g, ' ')}
-          </label>
-          <input
-            value={value}
-            onChange={(e) =>
-              setFormData((prev) => ({
-                ...prev,
-                cancellation_policy: {
-                  ...prev.cancellation_policy,
-                  [key]: e.target.value,
-                },
-              }))
-            }
-            className="w-full border border-[#B55031] px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#B55031]"
-          />
-        </div>
-      ))}
-    </div> */}
     <div className='pl-8'>
       <label className="block font-semibold text-gray-700 text-lg mb-2">Cancellation Policy</label>
       {Object.entries(formData.cancellation_policy).map(([key, value]) => (
