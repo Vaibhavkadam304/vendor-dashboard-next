@@ -241,8 +241,8 @@ export default function StorePage() {
   if (!authorized) return <p>Unauthorized</p>;
   
   return (
-    // <div className="max-w-4xl mx-auto p-6 space-y-8 border border-gray-300 shadow-sm">
-    <div>
+    // <div className="mx-auto space-y-8 border border-gray-300 shadow-sm">
+   <div>
     {/* <div className='p-2'> */}
     {/* Banner Upload */}
     <div className="mt-6 ml-8">
@@ -280,7 +280,7 @@ export default function StorePage() {
         className="hidden"
       />
     </div>
-    <div className='mt-6 flex items-start justify-between'>
+    <div className='mt-6 flex items-start justify-between px-8 py-4 pr-50'>
      {/* Store Name  and phone no*/}
       <div className="max-w-xs w-full ">
         <div>
@@ -432,7 +432,7 @@ export default function StorePage() {
         </div>
          ))}
     </div> */}
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pl-8 pt-8">
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pl-8 py-8 ">
       {['address_1', 'city', 'state', 'zip', 'country'].map((field) => (
         <div key={field}>
           <label className="block font-semibold text-gray-700 mb-1 capitalize">
@@ -496,7 +496,7 @@ export default function StorePage() {
 
 
     {/* Map Location Display */}
-    <div className='pl-8'>
+    <div className='pl-8 pb-4'>
       <p className="text-base text-gray-800">
         {[
           formData.locations?.[0]?.address_1,
@@ -528,7 +528,7 @@ export default function StorePage() {
         className="w-full border border-[#B55031] px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#B55031]"
       />
     </div> */}
-    <div className='pl-8'>
+    <div className='pl-8 pb-4'>
       <label className="block font-semibold text-gray-700 mb-1">Dietary Options</label>
       <div className="space-y-2 mt-2">
         {[
@@ -567,7 +567,7 @@ export default function StorePage() {
 
 
     {/* Shipping Options */}
-    <div className='pl-8'>
+    <div className='pl-8 pb-4'>
       <label className="block font-semibold text-gray-700 mb-1">Shipping Options Supported</label>
       <div className="space-y-2 mt-2">
         {[
@@ -601,7 +601,7 @@ export default function StorePage() {
 
 
       {/* Licensing and Certification */}
-      <div className='pl-8'>
+      <div className='pl-8 pb-4'>
         <label className="block font-semibold text-gray-700 mb-1">Licensing and Certification</label>
         <div className="space-y-2 mt-2">
           {[
@@ -666,7 +666,7 @@ export default function StorePage() {
         </div>
       </div>
       {/* Support Button Settings */}
-      <div className="mt-6 pl-8">
+      <div className="mt-6 pl-8 pb-4">
         <label className="block font-semibold text-gray-700 mb-1">Support Button Settings</label>
         <div className="space-y-2 mt-2">
           <label className="flex items-center space-x-2">
@@ -702,7 +702,7 @@ export default function StorePage() {
     
     
     {/* Bio */}
-    <div className='pl-8'>
+    <div className='pl-8 pb-4'>
       <label className="block font-semibold text-gray-700 mb-1">Bio</label>
       <textarea
         name="store_bio"
