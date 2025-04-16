@@ -129,7 +129,7 @@ export default function StorePage() {
         store_categories: vendorInfo.store_categories || [],
         dietary_options: vendorInfo.dietary_options || [],
         shipping_options: vendorInfo.shipping_options || [], // ✅ Add this line
-        licensing_certification: vendorInfo.licensing_certification || 'Cottage Food Licensed Business', // ✅ Default here
+        certification_status: vendorInfo.certification_status || 'fully', 
         cancellation_policy: vendorInfo.cancellation_policy || {},
         catalog_mode: {
           hide_add_to_cart_button: vendorInfo.catalog_mode?.hide_add_to_cart_button || 'off',
@@ -806,32 +806,35 @@ export default function StorePage() {
       </div>
 
       {/* Licensing and Certification */}
-      <div className="flex-1">
-        <label className="block font-semibold text-gray-700 mb-1">Licensing and Certification</label>
+        <div className="flex-1">
+          <label className="block font-semibold text-gray-700 mb-1">
+            Licensing and Certification
+          </label>
           <div className="space-y-2 mt-2">
             {[
-              'Commercially Licensed Business',
-              'Cottage Food Licensed Business',
-              'Working on obtaining required licenses',
-            ].map((option) => (
-              <label key={option} className="flex items-center space-x-2">
+              { label: 'Commercially Licensed Business', value: 'commercial' },
+              { label: 'Cottage Food Licensed Business', value: 'fully' },
+              { label: 'Working on obtaining required licenses', value: 'working' },
+            ].map(({ label, value }) => (
+              <label key={value} className="flex items-center space-x-2">
                 <input
                   type="radio"
-                  name="licensing_certification"
-                  value={option}
-                  checked={formData.licensing_certification === option}
+                  name="certification_status"
+                  value={value}
+                  checked={formData.certification_status === value}
                   onChange={(e) =>
                     setFormData((prev) => ({
                       ...prev,
-                      licensing_certification: e.target.value,
+                      certification_status: e.target.value,
                     }))
                   }
                 />
-                <span>{option}</span>
+                <span>{label}</span>
               </label>
             ))}
           </div>
-      </div>    
+        </div>
+
    
     </div>
 
