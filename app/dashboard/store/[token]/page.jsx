@@ -709,28 +709,28 @@ export default function StorePage() {
 
     
     {/* Bio */}
-<div className="px-8 pb-8 flex justify-center">
-  <div className="w-11/12">
-    <label className="block text-lg font-semibold text-gray-800 mb-2">
-      Bio
-    </label>
-    <div className="bg-white shadow-md rounded-xl border border-[#B55031] p-4">
-      <textarea
-        name="store_bio"
-        value={formData.store_bio}
-        onChange={handleChange}
-        placeholder="Write a short description about your store, experience, or products..."
-        className="w-full resize-none text-gray-700 placeholder-gray-400 border-none focus:ring-0 focus:outline-none bg-transparent"
-        rows={5}
-      />
+    <div className="px-8 pb-8 flex justify-center pb-30">
+      <div className="w-11/12">
+        <label className="block text-lg font-semibold text-gray-800 mb-2">
+          Bio
+        </label>
+        <div className="bg-white shadow-md rounded-xl border border-[#B55031] p-4">
+          <textarea
+            name="store_bio"
+            value={formData.store_bio}
+            onChange={handleChange}
+            placeholder="Write a short description about your store, experience, or products..."
+            className="w-full resize-none text-gray-700 placeholder-gray-400 border-none focus:ring-0 focus:outline-none bg-transparent"
+            rows={5}
+          />
+        </div>
+      </div>
     </div>
-  </div>
-</div>
 
 
 
 
-    <div className="flex flex-col md:flex-row gap-8 px-8 pb-8">
+    <div className="flex flex-col md:flex-row gap-8 px-8 pb-30">
       <div className="flex-1 space-y-6">
          <div>
            {/* Catalog Mode */}
@@ -837,7 +837,7 @@ export default function StorePage() {
 
 
     {/* Cancellation Policy */}
-    <div className='pl-8'>
+    <div className='pl-8 pb-10'>
       <label className="block font-semibold text-gray-700 text-lg mb-2">Cancellation Policy</label>
       {Object.entries(formData.cancellation_policy).map(([key, value]) => (
         <div key={key} className="mb-3">
