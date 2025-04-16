@@ -709,7 +709,7 @@ export default function StorePage() {
 
     
     {/* Bio */}
-    <div className="px-8 pb-8 flex justify-center pb-30">
+    <div className="px-8 pb-8 flex justify-center pb-20">
       <div className="w-11/12">
         <label className="block text-lg font-semibold text-gray-800 mb-2">
           Bio
@@ -730,7 +730,7 @@ export default function StorePage() {
 
 
 
-    <div className="flex flex-col md:flex-row gap-8 px-8 pb-30">
+    <div className="flex flex-col md:flex-row gap-8 px-8 pb-20">
       <div className="flex-1 space-y-6">
          <div>
            {/* Catalog Mode */}
