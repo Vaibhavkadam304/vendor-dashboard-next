@@ -242,7 +242,8 @@ export default function StorePage() {
   
   return (
     // <div className="max-w-4xl mx-auto p-6 space-y-8 border border-gray-300 shadow-sm">
-    <div className='p-2'>
+    <div>
+    {/* <div className='p-2'> */}
     {/* Banner Upload */}
     <div className="mt-6 ml-8">
       <div
@@ -279,7 +280,7 @@ export default function StorePage() {
         className="hidden"
       />
     </div>
-    <div className='mt-6 flex items-start justify-between px-8'>
+    <div className='mt-6 flex items-start justify-between'>
      {/* Store Name  and phone no*/}
       <div className="max-w-xs w-full ">
         <div>
