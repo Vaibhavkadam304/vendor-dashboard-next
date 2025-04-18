@@ -78,13 +78,13 @@ export default function useAuth() {
 
     // Step 2: Wait for postMessage (for new token)
     const handleMessage = (event) => {
-      const allowedOrigins = ['https://woocommerce-1355247-4989037.cloudwaysapps.com']; // ✅ Origin sending the postMessage
+      const allowedOrigins = ['https://vendrify.vercel.app']; // ✅ Origin sending the postMessage (Vercel)
 
       if (!allowedOrigins.includes(event.origin)) {
         console.error("❌ Invalid origin: ", event.origin);
         return;
       }
-      
+
       const { token } = event.data;
       if (token) {
         console.log("📦 New token from postMessage:", token);
