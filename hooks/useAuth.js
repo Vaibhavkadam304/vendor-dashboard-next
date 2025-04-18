@@ -67,7 +67,7 @@ export default function useAuth() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check cookie token on first load
+    // Step 1: Check cookie token on first load
     const existingToken = Cookies.get('jwt_token');
     if (existingToken) {
       console.log("🍪 Token from cookie:", existingToken);
@@ -103,14 +103,6 @@ export default function useAuth() {
     window.addEventListener('message', handleMessage);
     return () => window.removeEventListener('message', handleMessage);
   }, []); // ✅ run only once on mount
-
-  // Effect to watch for changes to the JWT cookie
-  useEffect(() => {
-    const cookieToken = Cookies.get('jwt_token');
-    if (cookieToken) {
-      validateToken(cookieToken);  // Re-validate token whenever cookie changes
-    }
-  }, [Cookies.get('jwt_token')]); // Watch the cookie directly
 
   const validateToken = (token) => {
     try {
