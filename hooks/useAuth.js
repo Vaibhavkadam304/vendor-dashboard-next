@@ -107,6 +107,7 @@ export default function useAuth() {
   const validateToken = (token) => {
     try {
       const decoded = jwtDecode(token);
+      console.log("Decoded JWT Payload:", decoded);  // Print the decoded payload for debugging
       const isExpired = decoded.exp * 1000 < Date.now();
       const isSeller = decoded.role === 'seller';
 
