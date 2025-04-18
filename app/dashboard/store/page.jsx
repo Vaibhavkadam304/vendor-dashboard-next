@@ -234,7 +234,6 @@ export default function StorePage() {
     setSubmitting(true);
     setMessage('');
     try {
-      
       const res = await fetch(
         `https://woocommerce-1355247-4989037.cloudwaysapps.com/wp-json/custom/v1/update-store/${vendorInfo.id}`,
         {
@@ -247,36 +246,20 @@ export default function StorePage() {
         }
       );
       const data = await res.json();
-      // if (res.ok) {
-      //   setMessage('Store updated successfully!');
-      // } else {
-      //   setMessage(`Error: ${data.message || 'Something went wrong'}`);
-      // }
+  
       if (res.ok) {
         setMessage('Store updated successfully!');
-        // const { location, cancellation_policy, ...restFormData } = formData;
-        // Merge old and updated values
+        
+        // Merge the old vendor data with the updated form data
         const { cancellation_policy, ...restFormData } = formData;
-        
-        // const updatedVendorData = {
-        //   ...vendorInfo,
-        //   ...restFormData,
-        //   cancellation_policy: {
-        //     ...vendorInfo.cancellation_policy,
-        //     ...formData.cancellation_policy,
-        //   },
-        // };
         const updatedVendorData = {
-            ...vendorInfo,
-            ...formData, // ← overwrite fully
-            cancellation_policy: formData.cancellation_policy || vendorInfo.cancellation_policy,
-            locations: formData.locations?.length
-              ? formData.locations
-              : vendorInfo.locations,
-          };
-        
+          ...vendorInfo,
+          ...restFormData, // fully overwrite with the updated form data
+          cancellation_policy: formData.cancellation_policy || vendorInfo.cancellation_policy,
+          locations: formData.locations?.length ? formData.locations : vendorInfo.locations,
+        };
+  
         // Explicitly overwrite locations
-        // updatedVendorData.locations = [...formData.locations];
         updatedVendorData.locations = [
           {
             address_1: '',
@@ -289,31 +272,27 @@ export default function StorePage() {
             ...(formData.locations?.[0] || {}),
           },
         ];
-        //updatedVendorData.locations[0].country = 'TEST_STATE_124';
-      
+  
         // 🔐 Re-encode JWT using jose
         const secret = 'wgziRFG/Mt3wmIv4K+BleKEPZxLXa0C7fc8KOLMnw3Watdi6XwNHojIk8egBnNxUVTZ5aVmTkCYGANtQIqEW9g==';
         const newToken = await createJWT(updatedVendorData, secret);
-
-        // Overwrite by clearing all paths first
+  
+        // Overwrite by clearing all paths first (remove old token if any)
         ['', '/', '/dashboard'].forEach(p =>
-            Cookies.remove('jwt_token', { path: p || '/' })
+          Cookies.remove('jwt_token', { path: p || '/' })
         );
-        
-        // Now set it
+  
+        // Now set the new token
         Cookies.set('jwt_token', newToken, {
-            expires: 7,
-            path: '/',
-            secure: true,
-            sameSite: 'None',
+          expires: 7,
+          path: '/',
+          secure: true,
+          sameSite: 'None',
         });
   
-        
         console.log('New token in cookie:', newToken);
-        
-        // localStorage.removeItem('jwt_token'); // If used
-        // Cookies.set('jwt_token', newToken, { expires: 7, secure: true, sameSite: 'Lax' });
-        // router.push(`/dashboard/store/${newToken}`);
+  
+        // Navigate to the updated store dashboard
         router.push('/dashboard/store');
       } else {
         setMessage(`Error: ${data.message || 'Something went wrong'}`);
@@ -325,6 +304,11 @@ export default function StorePage() {
       setSubmitting(false);
     }
   };
+  
+
+
+
+
   if (loading || !formData) return <p>Loading...</p>;
   if (!authorized) return <p>Unauthorized</p>;
   
