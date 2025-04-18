@@ -1,3 +1,5 @@
+
+
 // using cookies for fetching data 
 'use client';
 import { jwtDecode } from 'jwt-decode';
@@ -11,7 +13,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { Fragment } from "react";
 import { Listbox, Transition } from "@headlessui/react";
 import { XMarkIcon, CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
-// In your main entry or _app.js
+
 import 'leaflet/dist/leaflet.css';
 // import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import dynamic from 'next/dynamic';
@@ -36,12 +38,10 @@ const dietaryOptions = [
   { label: "Nut Free", value: "nut_free" },
   { label: "Vegan", value: "vegan" },
 ];
-
 const shippingOptions = [
   { label: "Local Pickup", value: "local_pickup" },
   { label: "Shipping Offered", value: "shipping_offered" },
 ];
-
 const cancellationOptions = [
   { label: "100% Refund", value: "100%" },
   { label: "75% Refund", value: "75%" },
@@ -50,40 +50,11 @@ const cancellationOptions = [
   { label: "No Refund", value: "0%" }
 ];
 
-
 const username = 'ck_5a5e3dfae960c8a4951168b46708c37d50bee800';
 const appPassword = 'cs_8d6853d98d8b75ddaae2da242987122f38504e7f';
 const base64Creds = btoa(`${username}:${appPassword}`);
 
 
-const handleBannerUpload = async (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
-  try {
-    const formDataUpload = new FormData();
-    formDataUpload.append("file", file);
-    const res = await fetch("https://woocommerce-1355247-4989037.cloudwaysapps.com/wp-json/wp/v2/media", {
-      method: "POST",
-      headers: {
-         Authorization: `Basic ${base64Creds}`,
-        // Don't set Content-Type manually! Let browser handle it for multipart
-      },
-      body: formDataUpload,
-    });
-    if (!res.ok) throw new Error("Upload failed");
-    const data = await res.json();
-    const imageUrl = data.source_url;
-    console.log("Uploaded banner URL:", imageUrl); // ✅ See what WordPress returns
-    // Update your formData with the banner image URL
-    setFormData((prev) => ({
-      ...prev,
-      banner: imageUrl,
-    }));
-  } catch (err) {
-    console.error("Error uploading banner:", err);
-    alert("Banner upload failed.");
-  }
-};
 // Helper function to create JWT
 async function createJWT(payload, secret) {
   const encoder = new TextEncoder();
@@ -176,6 +147,88 @@ export default function StorePage() {
     }
   };
 
+  
+  const handleBannerUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    try {
+      const formDataUpload = new FormData();
+      formDataUpload.append("file", file);
+      
+      // Define username and password for Basic Auth
+      const base64Creds = btoa(`${username}:${appPassword}`);  // Base64 encode the username:password
+
+      const res = await fetch("https://woocommerce-1355247-4989037.cloudwaysapps.com/wp-json/custom/v1/upload-image", {
+        method: "POST",
+        headers: {
+          Authorization: `Basic ${base64Creds}`, // Use the base64 encoded credentials
+        },
+        body: formDataUpload,
+      });
+
+      if (!res.ok) throw new Error("Upload failed");
+      const data = await res.json();
+      
+      if (data.success) {
+        const imageUrl = data.url;  // Custom response from your API
+        console.log("Uploaded banner URL:", imageUrl);
+        
+        // Update your formData with the banner image URL
+        setFormData((prev) => ({
+          ...prev,
+          banner: imageUrl,
+        }));
+      } else {
+        throw new Error(data.error || "Unknown error");
+      }
+
+    } catch (err) {
+      console.error("Error uploading banner:", err);
+      alert("Banner upload failed.");
+    }
+  };
+
+  const handleProfileUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+  
+    try {
+      const formDataUpload = new FormData();
+      formDataUpload.append("file", file);
+  
+      const base64Creds = btoa(`${username}:${appPassword}`);  // Replace with real credentials in env variables if needed
+  
+      const res = await fetch("https://woocommerce-1355247-4989037.cloudwaysapps.com/wp-json/custom/v1/upload-image", {
+        method: "POST",
+        headers: {
+          Authorization: `Basic ${base64Creds}`,
+        },
+        body: formDataUpload,
+      });
+  
+      if (!res.ok) throw new Error("Upload failed");
+      const data = await res.json();
+  
+      if (data.success) {
+        const imageUrl = data.url;
+        console.log("Uploaded profile picture URL:", imageUrl);
+  
+        setFormData((prev) => ({
+          ...prev,
+          profile_picture: imageUrl,
+        }));
+      } else {
+        throw new Error(data.error || "Unknown error");
+      }
+  
+    } catch (err) {
+      console.error("Error uploading profile picture:", err);
+      alert("Profile picture upload failed.");
+    }
+  };
+  
+
   const handleUpdate = async () => {
     if (!vendorInfo?.id) return;
     setSubmitting(true);
@@ -204,23 +257,23 @@ export default function StorePage() {
         // const { location, cancellation_policy, ...restFormData } = formData;
         // Merge old and updated values
         const { cancellation_policy, ...restFormData } = formData;
+        
         // const updatedVendorData = {
         //   ...vendorInfo,
         //   ...restFormData,
-        //   locations: formData.locations, // 👈 Keep it clean and simple now
         //   cancellation_policy: {
         //     ...vendorInfo.cancellation_policy,
-        //     ...cancellation_policy,
+        //     ...formData.cancellation_policy,
         //   },
         // };
         const updatedVendorData = {
-          ...vendorInfo,
-          ...restFormData,
-          cancellation_policy: {
-            ...vendorInfo.cancellation_policy,
-            ...formData.cancellation_policy,
-          },
-        };
+            ...vendorInfo,
+            ...formData, // ← overwrite fully
+            cancellation_policy: formData.cancellation_policy || vendorInfo.cancellation_policy,
+            locations: formData.locations?.length
+              ? formData.locations
+              : vendorInfo.locations,
+          };
         
         // Explicitly overwrite locations
         // updatedVendorData.locations = [...formData.locations];
@@ -241,13 +294,23 @@ export default function StorePage() {
         // 🔐 Re-encode JWT using jose
         const secret = 'wgziRFG/Mt3wmIv4K+BleKEPZxLXa0C7fc8KOLMnw3Watdi6XwNHojIk8egBnNxUVTZ5aVmTkCYGANtQIqEW9g==';
         const newToken = await createJWT(updatedVendorData, secret);
-      
-        // ✅ Store updated JWT in cookie
-        Cookies.set('jwt_token', newToken, { expires: 7, secure: true });
+
         Cookies.remove('jwt_token');
+        Cookies.remove('jwt_token', { path: '/' });
+        Cookies.remove('jwt_token', { path: '/dashboard' }); // just in case
+        Cookies.set('jwt_token', newToken, {
+        expires: 7,
+        path: '/',
+        secure: true,
+        sameSite: 'None',
+        });
+        
+        console.log('New token in cookie:', newToken);
+        
         // localStorage.removeItem('jwt_token'); // If used
         // Cookies.set('jwt_token', newToken, { expires: 7, secure: true, sameSite: 'Lax' });
-        router.push(`/dashboard/store/${newToken}`);
+        // router.push(`/dashboard/store/${newToken}`);
+        router.push('/dashboard/store');
       } else {
         setMessage(`Error: ${data.message || 'Something went wrong'}`);
       }
@@ -354,7 +417,7 @@ export default function StorePage() {
             id="profile-upload"
             type="file"
             accept="image/*"
-            onChange={handleBannerUpload}
+            onChange={handleProfileUpload}
             className="hidden"
           />
         </div>
@@ -377,7 +440,6 @@ export default function StorePage() {
         </div>
          ))}
     </div> */}
-
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pl-8 py-8 pb-16 ">
       {['address_1', 'city', 'state', 'zip', 'country'].map((field) => (
         <div key={field}>
@@ -435,7 +497,6 @@ export default function StorePage() {
         </div>
       ))}
     </div>
-
 
     <div className="flex flex-row px-8 pb-16 space-x-8">
       <div className="w-1/2 space-y-6">
@@ -518,9 +579,7 @@ export default function StorePage() {
             </Listbox>
           </div>
         </div>
-
        </div>
-
 
 
         {/* Dietary Options  */}
@@ -604,7 +663,6 @@ export default function StorePage() {
               </Listbox>
             </div>
           </div>
-
         </div>
          {/* Shipping Options */}
         <div>
@@ -687,7 +745,6 @@ export default function StorePage() {
               </Listbox>
             </div>
           </div>
-
         </div>
       </div>
        {/* Map Location Display */}
@@ -706,7 +763,6 @@ export default function StorePage() {
         <VendorMap lat={formData.map.lat} lng={formData.map.lng} />
       </div>
     </div>
-
     
     {/* Bio */}
     <div className="px-8 pb-8 flex justify-center pb-20">
@@ -726,7 +782,6 @@ export default function StorePage() {
         </div>
       </div>
     </div>
-
 
 
 
@@ -804,7 +859,6 @@ export default function StorePage() {
           </div>
      
       </div>
-
       {/* Licensing and Certification */}
         <div className="flex-1">
           <label className="block font-semibold text-gray-700 mb-1">
@@ -834,10 +888,8 @@ export default function StorePage() {
             ))}
           </div>
         </div>
-
    
     </div>
-
 
     {/* Cancellation Policy */}
     <div className='pl-8 pb-10'>
@@ -869,7 +921,6 @@ export default function StorePage() {
         </div>
       ))}
     </div>
-
     {/* Submit Button */}
     <div className='pl-8 pr-8'>
       <button
