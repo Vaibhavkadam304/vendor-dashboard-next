@@ -71,7 +71,7 @@ export default function useAuth() {
     const existingToken = Cookies.get('jwt_token');
     if (existingToken) {
       console.log("🍪 Token from cookie:", existingToken);
-      validateToken(existingToken);
+      validateToken(existingToken); // If token exists in cookie, validate it
     } else {
       setLoading(false); // No cookie, wait for postMessage
     }
@@ -82,18 +82,21 @@ export default function useAuth() {
         'https://vendrify.vercel.app',               // ✅ Vercel domain (sending postMessage)
         'https://woocommerce-1355247-4989037.cloudwaysapps.com'  // ✅ Cloudways domain (expected postMessage origin)
       ];
-      
+
       if (!allowedOrigins.includes(event.origin)) {
         console.error("❌ Invalid origin: ", event.origin);
         return;
       }
-      
 
-      const { token } = event.data;
-      if (token) {
-        console.log("📦 New token from postMessage:", token);
-        Cookies.set('jwt_token', token, { secure: true, sameSite: 'None' });
-        validateToken(token); // This updates state once
+      // If cookie token already exists, don't override it with the postMessage token
+      const existingToken = Cookies.get('jwt_token');
+      if (!existingToken) {  // Only update the token if it wasn't set already
+        const { token } = event.data;
+        if (token) {
+          console.log("📦 New token from postMessage:", token);
+          Cookies.set('jwt_token', token, { secure: true, sameSite: 'None' });
+          validateToken(token); // This updates state once
+        }
       }
     };
 
