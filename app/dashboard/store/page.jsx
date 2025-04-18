@@ -13,6 +13,8 @@ import { useParams, useRouter } from 'next/navigation';
 import { Fragment } from "react";
 import { Listbox, Transition } from "@headlessui/react";
 import { XMarkIcon, CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
+import MapboxLocationSuggester from '@/components/MapboxLocationSuggester';
+
 
 import 'leaflet/dist/leaflet.css';
 // import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
@@ -504,8 +506,13 @@ export default function StorePage() {
           )}
         </div>
       ))}
+       {/* 🧠 Show Mapbox suggestion after address fields */}
+        <MapboxLocationSuggester location={formData.locations?.[0]} />
     </div>
 
+
+
+    {/* Categories */}
     <div className="flex flex-row px-8 pb-16 space-x-8">
       <div className="w-1/2 space-y-6">
        
