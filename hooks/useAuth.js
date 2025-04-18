@@ -95,7 +95,10 @@ export default function useAuth() {
         if (token) {
           console.log("📦 New token from postMessage:", token);
           Cookies.set('jwt_token', token, { secure: true, sameSite: 'None' });
-          validateToken(token); // This updates state once
+          // validateToken(token); // This updates state once
+          setTimeout(() => {
+            validateToken(token);  // Validate after a delay to ensure the cookie is set
+          }, 1000);  // 300 ms delay, adjust as needed
         }
       }
     };
