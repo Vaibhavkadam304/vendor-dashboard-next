@@ -67,7 +67,7 @@ export default function useAuth() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Step 1: Check cookie token on first load and validate if it exists
+    // Step 1: Check cookie token on first load
     const existingToken = Cookies.get('jwt_token');
     if (existingToken) {
       console.log("🍪 Token from cookie:", existingToken);
@@ -77,30 +77,51 @@ export default function useAuth() {
     }
 
     // Step 2: Wait for postMessage (for new token)
+    // const handleMessage = (event) => {
+    //   const allowedOrigins = [
+    //     'https://vendrify.vercel.app',               // ✅ Vercel domain (sending postMessage)
+    //     'https://woocommerce-1355247-4989037.cloudwaysapps.com'  // ✅ Cloudways domain (expected postMessage origin)
+    //   ];
+
+    //   if (!allowedOrigins.includes(event.origin)) {
+    //     console.error("❌ Invalid origin: ", event.origin);
+    //     return;
+    //   }
+
+    //   // If cookie token already exists, don't override it with the postMessage token
+    //   const existingToken = Cookies.get('jwt_token');
+    //   if (!existingToken) {  // Only update the token if it wasn't set already
+    //     const { token } = event.data;
+    //     if (token) {
+    //       console.log("📦 New token from postMessage:", token);
+    //       Cookies.set('jwt_token', token, { secure: true, sameSite: 'None' });
+    //       validateToken(token); // This updates state once
+    //     }
+    //   }
+    // };
     const handleMessage = (event) => {
       const allowedOrigins = [
-        'https://vendrify.vercel.app',               // ✅ Vercel domain (sending postMessage)
-        'https://woocommerce-1355247-4989037.cloudwaysapps.com'  // ✅ Cloudways domain (expected postMessage origin)
+        'https://vendrify.vercel.app',
+        'https://woocommerce-1355247-4989037.cloudwaysapps.com'
       ];
-
+    
       if (!allowedOrigins.includes(event.origin)) {
         console.error("❌ Invalid origin: ", event.origin);
         return;
       }
-
-      // If cookie token doesn't exist, only update with postMessage token
-      const existingToken = Cookies.get('jwt_token');
-      if (!existingToken) {  // Only update the token if it wasn't set already
-        const { token } = event.data;
-        if (token) {
-          console.log("📦 New token from postMessage:", token);
-          Cookies.set('jwt_token', token, { secure: true, sameSite: 'None' });
-          // We are updating the token, no need to revalidate here
-          setAuthorized(true);
-          setVendorInfo({ token }); // Set the vendor info directly
-        }
+    
+      const { token } = event.data;
+      if (token) {
+        console.log("📦 New token from postMessage:", token);
+    
+        // Update the cookie with the new token
+        Cookies.set('jwt_token', token, { secure: true, sameSite: 'None' });
+    
+        // Directly update state without revalidation
+        setVendorInfo(prevState => ({ ...prevState, token }));
       }
     };
+    
 
     window.addEventListener('message', handleMessage);
     return () => window.removeEventListener('message', handleMessage);
