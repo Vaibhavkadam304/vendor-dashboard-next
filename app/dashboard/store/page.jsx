@@ -295,15 +295,19 @@ export default function StorePage() {
         const secret = 'wgziRFG/Mt3wmIv4K+BleKEPZxLXa0C7fc8KOLMnw3Watdi6XwNHojIk8egBnNxUVTZ5aVmTkCYGANtQIqEW9g==';
         const newToken = await createJWT(updatedVendorData, secret);
 
-        Cookies.remove('jwt_token');
-        Cookies.remove('jwt_token', { path: '/' });
-        Cookies.remove('jwt_token', { path: '/dashboard' }); // just in case
+        // Overwrite by clearing all paths first
+        ['', '/', '/dashboard'].forEach(p =>
+            Cookies.remove('jwt_token', { path: p || '/' })
+        );
+        
+        // Now set it
         Cookies.set('jwt_token', newToken, {
-        expires: 7,
-        path: '/',
-        secure: true,
-        sameSite: 'None',
+            expires: 7,
+            path: '/',
+            secure: true,
+            sameSite: 'None',
         });
+  
         
         console.log('New token in cookie:', newToken);
         
