@@ -67,7 +67,7 @@ export default function useAuth() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Step 1: Check cookie token on first load
+    // Step 1: Check cookie token on first load and validate if it exists
     const existingToken = Cookies.get('jwt_token');
     if (existingToken) {
       console.log("🍪 Token from cookie:", existingToken);
@@ -88,17 +88,16 @@ export default function useAuth() {
         return;
       }
 
-      // If cookie token already exists, don't override it with the postMessage token
+      // If cookie token doesn't exist, only update with postMessage token
       const existingToken = Cookies.get('jwt_token');
       if (!existingToken) {  // Only update the token if it wasn't set already
         const { token } = event.data;
         if (token) {
           console.log("📦 New token from postMessage:", token);
           Cookies.set('jwt_token', token, { secure: true, sameSite: 'None' });
-          // validateToken(token); // This updates state once
-          setTimeout(() => {
-            validateToken(token);  // Validate after a delay to ensure the cookie is set
-          }, 1000);  // 300 ms delay, adjust as needed
+          // We are updating the token, no need to revalidate here
+          setAuthorized(true);
+          setVendorInfo({ token }); // Set the vendor info directly
         }
       }
     };
