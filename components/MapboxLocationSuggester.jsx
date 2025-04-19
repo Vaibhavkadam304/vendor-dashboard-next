@@ -90,18 +90,8 @@ const MapboxLocationSuggester = ({ location }) => {
       container: mapContainerRef.current,
       style: 'mapbox://styles/mapbox/streets-v11',
       center: center,
-      zoom: 14, // a bit closer
-      pitch: 0,
-      bearing: 0
+      zoom: 12
     });
-    
-    // Add marker
-    new mapboxgl.Marker({ anchor: 'bottom' }) // ensures bottom of marker is at center
-      .setLngLat(center)
-      .addTo(map);
-    
-    // Make sure map renders correctly in small container
-    map.resize();
 
     new mapboxgl.Marker().setLngLat(center).addTo(map);
 
@@ -116,11 +106,11 @@ const MapboxLocationSuggester = ({ location }) => {
   
         {/* Map with coordinates shown inside the map container */}
         <div className="relative mt-4" style={{ height: '250px', width: '250px' }}>
-          <div
-            ref={mapContainerRef}
-            className="rounded shadow"
+        <div
+            className="rounded shadow overflow-hidden"
             style={{ height: '100%', width: '100%' }}
-          />
+            ref={mapContainerRef}
+         />
           <div className="absolute bottom-2 left-2 bg-white bg-opacity-90 px-3 py-1.5 text-xs text-gray-800 rounded-md shadow-lg">
             📍 Lat: {suggestedLocation.center[1].toFixed(5)}, Lng: {suggestedLocation.center[0].toFixed(5)}
           </div>

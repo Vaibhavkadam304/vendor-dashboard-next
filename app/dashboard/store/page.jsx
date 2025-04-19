@@ -677,6 +677,7 @@ export default function StorePage() {
             </div>
           </div>
         </div>
+        
          {/* Shipping Options */}
         <div>
           <div className="pb-4 max-w-md">
