@@ -75,7 +75,7 @@ export default function StorePage() {
   const params = useParams(); // token from [token]
   const token = params?.token;
   const [uploadMessage, setUploadMessage] = useState("");
-
+  const [uploadProfileMessage, setUploadProfileMessage] = useState("");
   useEffect(() => {
     
     if (vendorInfo) {
@@ -155,7 +155,7 @@ export default function StorePage() {
   const handleBannerUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    setUploadMessage("Uploading...");
+    setUploadMessage("Uploading Banner Image...");
     try {
       const formDataUpload = new FormData();
       formDataUpload.append("file", file);
@@ -183,7 +183,7 @@ export default function StorePage() {
           ...prev,
           banner: imageUrl,
         }));
-        setUploadMessage("Image uploaded ✅");
+        setUploadMessage("Banner Image Uploaded ✅");
       } else {
         throw new Error(data.error || "Unknown error");
       }
@@ -197,7 +197,7 @@ export default function StorePage() {
   const handleProfileUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
-  
+    setUploadProfileMessage("Uploading Profile Image...");
     try {
       const formDataUpload = new FormData();
       formDataUpload.append("file", file);
@@ -223,6 +223,7 @@ export default function StorePage() {
           ...prev,
           profile_picture: imageUrl,
         }));
+        setUploadProfileMessage("Profile Image Uploaded ✅");
       } else {
         throw new Error(data.error || "Unknown error");
       }
@@ -438,6 +439,9 @@ export default function StorePage() {
             className="hidden"
           />
         </div>
+        {uploadProfileMessage && (
+          <p className="text-sm mt-2 ml-2 text-gray-700">{uploadProfileMessage}</p>
+        )}
   </div>
  
     
