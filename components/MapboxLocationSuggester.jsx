@@ -84,20 +84,29 @@ const MapboxLocationSuggester = ({ location }) => {
 
   useEffect(() => {
     if (!suggestedLocation || !mapContainerRef.current) return;
-
+  
     const { center } = suggestedLocation; // [lng, lat]
+  
     const map = new mapboxgl.Map({
       container: mapContainerRef.current,
       style: 'mapbox://styles/mapbox/streets-v11',
       center: center,
-      zoom: 12
+      zoom: 14, // zoom in a bit more for better visibility
+      pitch: 0,
+      bearing: 0
     });
-
-    new mapboxgl.Marker().setLngLat(center).addTo(map);
-
+  
+    // Use anchor: 'bottom' to ensure marker points exactly to center
+    new mapboxgl.Marker({ anchor: 'bottom' })
+      .setLngLat(center)
+      .addTo(map);
+  
+    // Force the map to resize if container was hidden/animated
+    map.resize();
+  
     return () => map.remove();
   }, [suggestedLocation]);
-
+  
   return (
     suggestedLocation && (
       <div className="pl-8 text-sm text-gray-700 pt-2">
