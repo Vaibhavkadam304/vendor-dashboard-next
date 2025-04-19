@@ -438,10 +438,11 @@ export default function StorePage() {
             onChange={handleProfileUpload}
             className="hidden"
           />
+           {uploadProfileMessage && (
+            <p className="text-sm mt-2 ml-2 text-gray-700">{uploadProfileMessage}</p>
+          )}
         </div>
-        {uploadProfileMessage && (
-          <p className="text-sm mt-2 ml-2 text-gray-700">{uploadProfileMessage}</p>
-        )}
+       
   </div>
  
     
