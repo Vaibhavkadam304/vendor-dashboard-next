@@ -14,7 +14,8 @@ import { Fragment } from "react";
 import { Listbox, Transition } from "@headlessui/react";
 import { XMarkIcon, CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 import MapboxLocationSuggester from '@/components/MapboxLocationSuggester';
-
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'; // Import the styles for react-toastify
 
 import 'leaflet/dist/leaflet.css';
 // import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
@@ -73,7 +74,8 @@ export default function StorePage() {
   const [message, setMessage] = useState('');
   const params = useParams(); // token from [token]
   const token = params?.token;
- 
+  const [uploadMessage, setUploadMessage] = useState("");
+
   useEffect(() => {
     
     if (vendorInfo) {
@@ -153,7 +155,7 @@ export default function StorePage() {
   const handleBannerUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
-
+    setUploadMessage("Uploading...");
     try {
       const formDataUpload = new FormData();
       formDataUpload.append("file", file);
@@ -181,6 +183,7 @@ export default function StorePage() {
           ...prev,
           banner: imageUrl,
         }));
+        setUploadMessage("Image uploaded ✅");
       } else {
         throw new Error(data.error || "Unknown error");
       }
@@ -374,6 +377,10 @@ export default function StorePage() {
         className="hidden"
       />
     </div>
+    {uploadMessage && (
+      <p className="text-sm mt-2 ml-2 text-gray-700">{uploadMessage}</p>
+    )}
+
     <div className='mt-6 flex items-start justify-between px-8 py-4 pr-50'>
      {/* Store Name  and phone no*/}
       <div className="max-w-xs w-full ">
@@ -677,7 +684,7 @@ export default function StorePage() {
             </div>
           </div>
         </div>
-        
+
          {/* Shipping Options */}
         <div>
           <div className="pb-4 max-w-md">
@@ -936,7 +943,7 @@ export default function StorePage() {
       >
         {submitting ? 'Updating...' : 'Update Profile'}
       </button>
-      {message && <p className="mt-3 text-sm text-green-600">{message}</p>}
+      {/* {message && <p className="mt-3 text-sm text-green-600">{message}</p>} */}
     </div>
   </div>
   
