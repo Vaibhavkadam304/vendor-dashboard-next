@@ -431,6 +431,9 @@ export default function StorePage() {
               <p className="text-white text-sm font-medium">Click to change</p>
             </div>
           </div>
+          {uploadProfileMessage && (
+            <p className="text-sm mt-2 ml-2 text-gray-700">{uploadProfileMessage}</p>
+          )}
           <input
             id="profile-upload"
             type="file"
@@ -438,9 +441,7 @@ export default function StorePage() {
             onChange={handleProfileUpload}
             className="hidden"
           />
-           {uploadProfileMessage && (
-            <p className="text-sm mt-2 ml-2 text-gray-700">{uploadProfileMessage}</p>
-          )}
+           
         </div>
        
   </div>
