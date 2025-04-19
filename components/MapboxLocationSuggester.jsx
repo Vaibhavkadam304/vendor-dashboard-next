@@ -105,14 +105,14 @@ const MapboxLocationSuggester = ({ location }) => {
         <p>{suggestedLocation.place_name}</p>
   
         {/* Map with coordinates shown inside the map container */}
-        <div className="relative mt-4" style={{ height: '200px', width: '200px' }}>
+        <div className="relative mt-4" style={{ height: '250px', width: '250px' }}>
           <div
             ref={mapContainerRef}
             className="rounded shadow"
             style={{ height: '100%', width: '100%' }}
           />
-          <div className="absolute bottom-1 left-1 bg-white bg-opacity-80 px-2 py-1 text-xs text-gray-700 rounded shadow">
-            Lat: {suggestedLocation.center[1].toFixed(5)}, Lng: {suggestedLocation.center[0].toFixed(5)}
+          <div className="absolute bottom-2 left-2 bg-white bg-opacity-90 px-3 py-1.5 text-xs text-gray-800 rounded-md shadow-lg">
+            📍 Lat: {suggestedLocation.center[1].toFixed(5)}, Lng: {suggestedLocation.center[0].toFixed(5)}
           </div>
         </div>
       </div>
