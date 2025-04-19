@@ -90,8 +90,18 @@ const MapboxLocationSuggester = ({ location }) => {
       container: mapContainerRef.current,
       style: 'mapbox://styles/mapbox/streets-v11',
       center: center,
-      zoom: 12
+      zoom: 14, // a bit closer
+      pitch: 0,
+      bearing: 0
     });
+    
+    // Add marker
+    new mapboxgl.Marker({ anchor: 'bottom' }) // ensures bottom of marker is at center
+      .setLngLat(center)
+      .addTo(map);
+    
+    // Make sure map renders correctly in small container
+    map.resize();
 
     new mapboxgl.Marker().setLngLat(center).addTo(map);
 
