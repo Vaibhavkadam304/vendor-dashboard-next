@@ -82,21 +82,45 @@ const MapboxLocationSuggester = ({ location }) => {
     fetchSuggestion();
   }, [location]);
 
+  // useEffect(() => {
+  //   if (!suggestedLocation || !mapContainerRef.current) return;
+
+  //   const { center } = suggestedLocation; // [lng, lat]
+  //   const map = new mapboxgl.Map({
+  //     container: mapContainerRef.current,
+  //     style: 'mapbox://styles/mapbox/streets-v11',
+  //     center: center,
+  //     zoom: 12
+  //   });
+
+  //   new mapboxgl.Marker().setLngLat(center).addTo(map);
+
+  //   return () => map.remove();
+  // }, [suggestedLocation]);
   useEffect(() => {
     if (!suggestedLocation || !mapContainerRef.current) return;
-
-    const { center } = suggestedLocation; // [lng, lat]
+  
+    const { center } = suggestedLocation;
     const map = new mapboxgl.Map({
       container: mapContainerRef.current,
       style: 'mapbox://styles/mapbox/streets-v11',
       center: center,
       zoom: 12
     });
-
-    new mapboxgl.Marker().setLngLat(center).addTo(map);
-
+  
+    new mapboxgl.Marker()
+      .setLngLat(center)
+      .setPopup(
+        new mapboxgl.Popup({ offset: 25 }).setText(
+          `Lat: ${center[1].toFixed(5)}, Lng: ${center[0].toFixed(5)}`
+        )
+      )
+      .addTo(map)
+      .togglePopup();
+  
     return () => map.remove();
   }, [suggestedLocation]);
+  
 
   return (
     suggestedLocation && (
@@ -104,11 +128,12 @@ const MapboxLocationSuggester = ({ location }) => {
         <p className="font-medium text-[#B55031]">Suggested Location:</p>
         <p>{suggestedLocation.place_name}</p>
 
-        <div
-          ref={mapContainerRef}
-          className="mt-4 rounded shadow"
-          style={{ height: '200px', width: '200px' }}
-        />
+        <div className="flex items-center gap-2 text-sm text-gray-600 mt-2">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-[#B55031]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 11c0-1.104-.896-2-2-2s-2 .896-2 2 .896 2 2 2 2-.896 2-2zm0 0c0 2-2 3.5-2 3.5s-2-1.5-2-3.5 2-3.5 2-3.5 2 1.5 2 3.5z" />
+          </svg>
+          <span>{suggestedLocation.center[1].toFixed(5)}, {suggestedLocation.center[0].toFixed(5)}</span>
+        </div>
         </div>
         )
   );
