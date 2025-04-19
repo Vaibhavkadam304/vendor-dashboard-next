@@ -506,8 +506,6 @@ export default function StorePage() {
           )}
         </div>
       ))}
-       {/* 🧠 Show Mapbox suggestion after address fields */}
-        <MapboxLocationSuggester location={formData.locations?.[0]} />
     </div>
 
 
@@ -762,22 +760,13 @@ export default function StorePage() {
           </div>
         </div>
       </div>
-      
+
        {/* Map Location Display */}
-      {/* <div className="w-1/2 flex flex-col items-end space-y-2 pr-8">
-          <p className="text-base text-gray-800 text-right">
-          {[
-            formData.locations?.[0]?.address_1,
-            formData.locations?.[0]?.city,
-            formData.locations?.[0]?.state,
-            formData.locations?.[0]?.zip,
-            formData.locations?.[0]?.country,
-          ]
-            .filter(Boolean)
-            .join(', ')}
-        </p>
-        <VendorMap lat={formData.map.lat} lng={formData.map.lng} />
-      </div> */}
+      <div className="w-1/2 flex flex-col items-end space-y-2 pr-8"> 
+         {/* 🧠 Show Mapbox suggestion after address fields */}
+         <MapboxLocationSuggester location={formData.locations?.[0]} />
+      </div>
+      
     </div>
     
     {/* Bio */}
