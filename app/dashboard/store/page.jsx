@@ -762,8 +762,9 @@ export default function StorePage() {
           </div>
         </div>
       </div>
+      
        {/* Map Location Display */}
-      <div className="w-1/2 flex flex-col items-end space-y-2 pr-8">
+      {/* <div className="w-1/2 flex flex-col items-end space-y-2 pr-8">
           <p className="text-base text-gray-800 text-right">
           {[
             formData.locations?.[0]?.address_1,
@@ -776,7 +777,7 @@ export default function StorePage() {
             .join(', ')}
         </p>
         <VendorMap lat={formData.map.lat} lng={formData.map.lng} />
-      </div>
+      </div> */}
     </div>
     
     {/* Bio */}
